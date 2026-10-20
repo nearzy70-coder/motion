@@ -20,7 +20,7 @@ Film publicitaire en motion design pour [Desk to Desk](https://www.desk-to-desk.
 
 ## v7 : « La maquette » (version complète tout en 3D)
 
-**`renders/final/desk-to-desk_le-fil-v7-maquette_1x1_1080x1080.mp4`** (1:1, 68 s, même voix off, nouvelle bande-son de bruitages).
+**`renders/final/desk-to-desk_le-fil-v7-maquette_1x1_1080x1080.mp4`** (1:1, 68 s, même voix off, nouvelle bande-son de bruitages ; planche contact : `renders/final/planche-contact-v7-maquette_1x1.jpg`).
 Tout le film se joue dans une maquette d'architecte en 3D (Three.js) :
 - volumes blancs mats sur fond noir ;
 - lumière de studio : environnement, soleil et ombres douces ;
