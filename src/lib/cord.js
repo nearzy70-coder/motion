@@ -17,8 +17,22 @@ export function makeCordLayer(canvas, W, H) {
       g.fillStyle = 'rgba(0,0,0,0.004)';
       g.fillRect(0, 0, 1, 1);
     },
+    // Version « trait » du film : un trait plat, sans tresse ni ombre
+    flat: false,
     draw(pts, o = {}) {
       const w = o.width ?? 10;
+      if (this.flat) {
+        if (pts.length < 2) return;
+        g.save();
+        g.lineCap = 'round'; g.lineJoin = 'round';
+        g.strokeStyle = o.color ?? '#2ACAA5';
+        g.lineWidth = w;
+        g.beginPath();
+        pts.forEach((p, k) => (k ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])));
+        g.stroke();
+        g.restore();
+        return;
+      }
       if ((o.shadow ?? 1) > 0 && pts.length > 1) {
         sg.clearRect(0, 0, sc.width, sc.height);
         sg.save();

@@ -4,14 +4,13 @@
 // critère dessiné quand la voix le dit (plan, pièces, épingle, bail, porte), la caméra collée à la pointe.
 // Recul : vu de loin, tout le dessin n'est qu'un écheveau. Le trait encercle le tout d'une horloge dont l'aiguille
 // file. Dans le silence avant le drop, on tire le bout : tout le dessin se tend, en vague, en une seule ligne droite.
-import { el, svg, show, op } from '../lib/dom.js';
-import { E, prog, lerp, rng } from '../lib/ease.js';
+import { el, show, op } from '../lib/dom.js';
+import { E, prog, lerp } from '../lib/ease.js';
 import { spline, lengths } from '../lib/path.js';
+import { sample, line, loopy, arc, springCamera } from '../lib/stroke.js';
 import { T, L, W, H, pick } from '../timeline.js';
 
 const LINE = 9;            // épaisseur du trait (monde)
-const STEP = 4;            // pas d'échantillonnage (monde)
-const HZ = 240;
 const MINT = '#2ACAA5';
 
 // Icônes d'un seul trait, coordonnées locales (le trait repasse sur lui-même plutôt que de lever la plume)
@@ -35,74 +34,9 @@ const PAPER = { x0: -1010, x1: 560, y0: -620, y1: 40 };
 const CLOCK_R = 1150;
 const SPAN = pick(3200, 2600);   // longueur à l'écran du fil tendu
 
-let sampler, path, Ls, segs, total, camAt, labels, hookRoot, hookLines, heads, flies, hand, tPull0;
-
-function sample(d, [ox, oy], s = 1) {
-  sampler.setAttribute('d', d);
-  const len = sampler.getTotalLength();
-  const n = Math.max(2, Math.ceil(len / STEP));
-  const pts = [];
-  for (let i = 0; i <= n; i++) {
-    const p = sampler.getPointAtLength((len * i) / n);
-    pts.push([ox + p.x * s, oy + p.y * s]);
-  }
-  return pts;
-}
-
-function line(A, B) {
-  const n = Math.max(2, Math.ceil(Math.hypot(B[0] - A[0], B[1] - A[1]) / STEP));
-  return Array.from({ length: n + 1 }, (_, i) => [lerp(A[0], B[0], i / n), lerp(A[1], B[1], i / n)]);
-}
-
-// Trait qui file d'un point à l'autre en faisant des boucles (cycloïde allongée le long d'une courbe)
-function loopy(way, perPx, R) {
-  const base = spline(way, 12);
-  const Lb = lengths(base);
-  const tot = Lb[Lb.length - 1];
-  const n = Math.ceil(tot / 2.5);
-  const out = [];
-  let j = 1;
-  for (let i = 0; i <= n; i++) {
-    const s = (tot * i) / n;
-    while (j < Lb.length - 1 && Lb[j] < s) j++;
-    const a = base[j - 1], b = base[j];
-    const u = (s - Lb[j - 1]) / ((Lb[j] - Lb[j - 1]) || 1);
-    const x = lerp(a[0], b[0], u), y = lerp(a[1], b[1], u);
-    const dx = b[0] - a[0], dy = b[1] - a[1], dl = Math.hypot(dx, dy) || 1;
-    const tx = dx / dl, ty = dy / dl, nx = -ty, ny = tx;
-    const env = Math.min(1, s / 260, (tot - s) / 260);
-    const ang = 2 * Math.PI * perPx * s;
-    const lx = -Math.sin(ang) * R * env, ly = (1 - Math.cos(ang)) * R * env;
-    out.push([x + tx * lx + nx * ly, y + ty * lx + ny * ly]);
-  }
-  // Rééchantillonnage régulier (la vitesse de la plume reste constante dans les boucles)
-  const Lo = lengths(out);
-  const m = Math.ceil(Lo[Lo.length - 1] / STEP);
-  const res = [];
-  let k = 1;
-  for (let i = 0; i <= m; i++) {
-    const s = (Lo[Lo.length - 1] * i) / m;
-    while (k < Lo.length - 1 && Lo[k] < s) k++;
-    const a = out[k - 1], b = out[k];
-    const u = (s - Lo[k - 1]) / ((Lo[k] - Lo[k - 1]) || 1);
-    res.push([lerp(a[0], b[0], u), lerp(a[1], b[1], u)]);
-  }
-  return res;
-}
-
-function arc(c, r, a0, a1) {
-  const n = Math.ceil((Math.abs(a1 - a0) * r) / STEP);
-  return Array.from({ length: n + 1 }, (_, i) => {
-    const a = lerp(a0, a1, i / n);
-    return [c[0] + Math.cos(a) * r, c[1] + Math.sin(a) * r];
-  });
-}
+let path, Ls, segs, total, camAt, labels, hookRoot, hookLines, heads, flies, hand, tPull0;
 
 export function build(ctx) {
-  const R = rng(31);
-  const host = svg('svg', { width: 0, height: 0, style: 'position:absolute;left:-9999px' }, document.body);
-  sampler = svg('path', {}, host);
-
   // --- Le dessin, segment par segment, chacun avec sa fenêtre de temps (calée sur la voix)
   segs = [];
   let cur = null;
@@ -175,31 +109,7 @@ export function build(ctx) {
     // Recul sur l'écheveau, puis lente avancée pendant que l'horloge tourne
     return [0, 0, lerp(zoomIn, 0.43, E.inOutCubic(prog(t, 11.3, 12.2))) * (1 + 0.07 * E.inOutCubic(prog(t, 12.2, 14.5)))];
   };
-  const tA = -0.5, tB = T.blind + 0.2;
-  const n = Math.ceil((tB - tA) * HZ);
-  const rec = new Float32Array((n + 1) * 3);
-  let s = focus(tA), v = [0, 0, 0];
-  const w0 = 9.5, wz = 7.5;
-  for (let k = 0; k <= n; k++) {
-    const t = tA + k / HZ;
-    const f = focus(t);
-    // Ressort critique : position (ω = 9,5) et zoom (ω = 7,5) ; le zoom travaille en logarithme
-    for (let c = 0; c < 3; c++) {
-      const w = c === 2 ? wz : w0;
-      const tgt = c === 2 ? Math.log(f[2]) : f[c];
-      const x = c === 2 ? Math.log(s[2]) : s[c];
-      const a = w * w * (tgt - x) - 2 * w * v[c];
-      v[c] += a / HZ;
-      const nx = x + v[c] / HZ;
-      s[c] = c === 2 ? Math.exp(nx) : nx;
-    }
-    rec[k * 3] = s[0]; rec[k * 3 + 1] = s[1]; rec[k * 3 + 2] = s[2];
-  }
-  camAt = (t) => {
-    const u = Math.max(0, Math.min(n, (t - tA) * HZ));
-    const k0 = Math.floor(u), k1 = Math.min(n, k0 + 1), a = u - k0;
-    return [lerp(rec[k0 * 3], rec[k1 * 3], a), lerp(rec[k0 * 3 + 1], rec[k1 * 3 + 1], a), lerp(rec[k0 * 3 + 2], rec[k1 * 3 + 2], a)];
-  };
+  camAt = springCamera(focus, -0.5, T.blind + 0.2);
 
   // --- Textes posés dans le monde, à côté de chaque dessin
   const world = el('div', { cls: 'abs', style: { transformOrigin: '0 0' } }, ctx.layers.worldFront);

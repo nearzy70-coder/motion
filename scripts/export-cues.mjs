@@ -8,9 +8,11 @@ const { server, port } = await startServer();
 const b = await chromium.launch({ args: CHROME_ARGS });
 try {
   const opening = process.argv[3] || '';
-  const { page } = await openStage(b, port, process.argv[2] || '11', opening);
+  const film = process.argv[4] || '';
+  const { page } = await openStage(b, port, process.argv[2] || '11', opening, film);
   const cues = await page.evaluate(() => window.__cues);
-  const out = path.join(ROOT, 'audio', opening ? `cues-${opening}.json` : 'cues.json');
+  const tag = film || opening;
+  const out = path.join(ROOT, 'audio', tag ? `cues-${tag}.json` : 'cues.json');
   fs.writeFileSync(out, JSON.stringify(cues, null, 2));
   console.log(out, Object.keys(cues.T).length, 'repères');
 } finally {

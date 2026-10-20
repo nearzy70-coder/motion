@@ -88,6 +88,8 @@ const params = new URLSearchParams(typeof location !== 'undefined' ? location.se
 export const L = FORMATS[params.get('f') || '916'] || FORMATS['916'];
 // Ouverture (0 à 15,25 s) : pile de mots (v4), pelote de fil en 3D, tableau d'enquête, ou trait continu (v5 finale)
 export const OPENING = ['pile', 'pelote', 'enquete', 'trait'].includes(params.get('o')) ? params.get('o') : 'pile';
+// Film : « fil » (corde à linge, v3 à v5) ou « ligne » (tout le film en un seul trait, ouverture « trait »)
+export const FILM = params.get('v') === 'ligne' ? 'ligne' : 'fil';
 export const W = L.W;
 export const H = L.H;
 export const is916 = L.id === '916';

@@ -14,6 +14,7 @@ const WORKERS = Number(args.workers ?? 4);
 const NAME = args.name ?? 'desk-to-desk_le-fil-v3';
 const CRF = String(args.crf ?? 12);
 const OPENING = args.o ?? '';
+const FILM = args.v ?? '';
 const SHUTTER = 0.5;
 const SIZE = { '916': '1080x1920', '11': '1080x1080' }[FORMAT];
 const LABEL = { '916': '9x16', '11': '1x1' }[FORMAT];
@@ -27,7 +28,7 @@ fs.mkdirSync(outDir, { recursive: true });
 const { server, port } = await startServer();
 // Spécifications lues dans le film lui-même
 const probe = await chromium.launch({ args: CHROME_ARGS });
-const { spec, T } = await (await openStage(probe, port, FORMAT, OPENING)).page.evaluate(() => ({ spec: window.__spec, T: window.__cues.T }));
+const { spec, T } = await (await openStage(probe, port, FORMAT, OPENING, FILM)).page.evaluate(() => ({ spec: window.__spec, T: window.__cues.T }));
 await probe.close();
 
 // Échantillonnage temporel adaptatif : plus de sous-images là où le mouvement est très rapide
@@ -36,6 +37,8 @@ const FAST = [[T.thread, T.blind + 0.75], [T.line - 0.05, T.line + 0.55], [T.fre
   ...[T.fmt2, T.fmt3, T.s1, T.s2, T.s3, T.s4, T.s5, T.reneg, T.day].map((tb) => [tb - 0.58, tb + 0.05])];
 const MEDIUM = [[T.strike - 0.15, T.strike + 0.7], [T.fall, T.thread], [T.stamp - 0.15, T.stamp + 0.3], [T.s5 - 0.2, T.s5 + 0.5],
   [T.map, T.free], [T.vousOut - 0.25, T.dot + 0.35]];
+// Film « ligne » : la caméra longe le trait en continu, toute la partie noire passe en échantillonnage moyen
+if (FILM === 'ligne') MEDIUM.push([T.line, T.free]);
 const inAny = (t, W) => W.some(([a, b]) => t >= a && t <= b);
 const samplesFor = (t) => (S_BASE <= 1 ? 1 : inAny(t, FAST) ? 12 : inAny(t, MEDIUM) ? 6 : S_BASE);
 const FPS = spec.FPS;
@@ -57,7 +60,7 @@ const errors = [];
 async function worker(list) {
   const browser = await chromium.launch({ args: CHROME_ARGS });
   try {
-    const { page, errors: pe } = await openStage(browser, port, FORMAT, OPENING);
+    const { page, errors: pe } = await openStage(browser, port, FORMAT, OPENING, FILM);
     const cdp = await page.context().newCDPSession(page);
     for (const j of list) {
       const t = Math.max(0, j.f / FPS + (j.S > 1 ? ((j.s + 0.5) / j.S - 0.5) * (SHUTTER / FPS) : 0));
@@ -82,7 +85,7 @@ console.log(`Capture terminée : ${jobs.length} sous-images en ${((Date.now() - 
 if (errors.length) console.warn('Erreurs page :\n' + errors.join('\n'));
 
 // --- Audio : normalisation -14 LUFS (2 passes), crête vraie -1 dBTP
-const wav = path.join(ROOT, 'renders', 'audio', OPENING ? `le-fil-${OPENING}-mix.wav` : 'le-fil-v3-mix.wav');
+const wav = path.join(ROOT, 'renders', 'audio', FILM || OPENING ? `le-fil-${FILM || OPENING}-mix.wav` : 'le-fil-v3-mix.wav');
 const hasAudio = fs.existsSync(wav);
 let afilter = null;
 if (hasAudio) {

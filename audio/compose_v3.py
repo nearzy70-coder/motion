@@ -427,14 +427,31 @@ for tc in (T["line"], T["map"]):
     for j in range(4):
         clap_b.add(snare(0.2 + 0.08 * j), tc - BEAT + j * BEAT / 4, pan=0.0)
     hit(fx_b, CYM_SOFT, tc, 0.4, -0.15)
-# Pinces à linge : un clac de bois à chaque arrivée de caméra
-for key in ("line", "fmt2", "fmt3", "s1", "s2", "s3", "s4", "s5", "reneg", "day"):
-    hit(foley_b, CLACK, T[key] - 0.02, 0.5, 0.25)
-# Punaises sur la carte (étape 2)
-for i in range(3):
-    hit(foley_b, CLACK, T["s2"] + 1.75 + i * 0.2, 0.3, 0.1 + 0.15 * i, semis=4)
-# Maquette qui se déplie (étape 3)
-hit(foley_b, SLAP, T["s3"] + 0.42, 0.18, 0.0)
+LIGNE = CUES.get("FILM") == "ligne"   # film « en un seul trait » : ses propres bruitages (plus de pinces ni de maquette)
+if not LIGNE:
+    # Pinces à linge : un clac de bois à chaque arrivée de caméra
+    for key in ("line", "fmt2", "fmt3", "s1", "s2", "s3", "s4", "s5", "reneg", "day"):
+        hit(foley_b, CLACK, T[key] - 0.02, 0.5, 0.25)
+    # Punaises sur la carte (étape 2)
+    for i in range(3):
+        hit(foley_b, CLACK, T["s2"] + 1.75 + i * 0.2, 0.3, 0.1 + 0.15 * i, semis=4)
+    # Maquette qui se déplie (étape 3)
+    hit(foley_b, SLAP, T["s3"] + 0.42, 0.18, 0.0)
+else:
+    for pw in CUES["pen2"]:                     # le trait qui dessine (feutre)
+        foley_b.add(marker(pw["t1"] - pw["t0"], 0.07 if pw["rush"] else 0.045), pw["t0"], pan=rng.uniform(-0.25, 0.25))
+    foley_b.add(marker(1.3, 0.05), T["end"] + 0.3, pan=0.1)   # la courbe de croissance
+    for tk in CUES["ticks"]:                    # les cases se cochent
+        hit(foley_b, CLAVES, tk - 0.1, 0.32, 0.2, semis=7, dur=0.1, rel=0.04)
+    p0, p1 = CUES["particles"]                  # les offres tombent dans l'entonnoir
+    for k_ in range(24):
+        hit(foley_b, CLACK, p0 + (p1 - p0) * rng.random() + 0.25, 0.12, rng.uniform(-0.4, 0.4), semis=rng.uniform(4, 10), dur=0.08, rel=0.03)
+    for k_, m in enumerate([81, 84, 88]):       # trois seulement passent : trois notes qui montent
+        pl_b.add(pluck(m, 0.4, 0.8), CUES["chosen"] + 0.2 + k_ * 0.14, pan=(-0.2, 0.0, 0.2)[k_])
+    hit(foley_b, GUIRO, CUES["door"], 0.14, 0.2, semis=-12, dur=0.5, rel=0.1)   # la porte s'ouvre
+    for tw in CUES["weights"]:                  # chaque mot tombe sur un plateau de la balance
+        foley_b.add(thud(0.45), tw + 0.3, 0.22, pan=rng.uniform(-0.3, 0.3))
+        hit(foley_b, CLACK, tw + 0.3, 0.25, 0.0, semis=-2)
 # Coup de tampon (étape 4) : la batterie se tait un temps, puis le tampon tombe avec la grosse caisse
 mute = (T["stamp"] - BEAT, T["stamp"] - 0.005)
 i0, i1 = int(mute[0] * SR), int(mute[1] * SR)
@@ -445,11 +462,13 @@ KICKS[:] = [(t, v) for t, v in KICKS if not (mute[0] <= t < mute[1])]
 hit(foley_b, BDRUM, T["stamp"], 0.9, 0.0)
 hit(foley_b, SLAP, T["stamp"] + 0.004, 0.35, 0.05)
 fx_b.add(sub_boom(0.45, 48, 0.9), T["stamp"])
-# Les clés tombent sur la corde (étape 5)
-hit(foley_b, SLEIGH, T["s5"] + 0.02, 0.4, 0.2)
-hit(foley_b, SLEIGH, T["s5"] + 0.42, 0.22, 0.25)
+# Les clés tombent sur la corde (étape 5) ; dans le film « ligne », la clé tourne
+t_keys = CUES["keyTurn"] if "keyTurn" in CUES else T["s5"] + 0.02
+hit(foley_b, SLEIGH, t_keys, 0.4, 0.2)
+hit(foley_b, SLEIGH, t_keys + 0.4, 0.22, 0.25)
 # Les villes : une note de glockenspiel par ville nommée
-for (name, t), m in zip([(c["name"], c["t"]) for c in CUES["cities"]], [84, 86, 88, 91, 93, 96, 98]):
+CITY_CUES = CUES.get("cities") or [{"name": n, "t": t} for n, t in sorted(T["cities"].items(), key=lambda kv: kv[1])]
+for (name, t), m in zip([(c["name"], c["t"]) for c in CITY_CUES], [84, 86, 88, 91, 93, 96, 98]):
     glock.play(fx_b, t, m, 0.5, 0.42, pan=rng.uniform(-0.3, 0.3), dur=1.4, rel=0.6)
 
 # ================================================================ 8. Gratuité : le groove s'efface, piano (54,75 → 59 s)

@@ -111,6 +111,7 @@ export function update(t, ctx) {
 
   const bOn = t >= T.brand[0] - 0.05 && t < T.line;
   show(brand, bOn);
+  if (ctx.shared.noSubs) show(subs, false);
   if (bOn) {
     const words = brand.querySelectorAll('.word');
     const times = [];

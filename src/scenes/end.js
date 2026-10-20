@@ -4,8 +4,10 @@
 import { el, show, op, tf } from '../lib/dom.js';
 import { E, prog, lerp } from '../lib/ease.js';
 import { T, L, W, pick } from '../timeline.js';
+import { curve } from '../lib/stroke.js';
+import { lengths } from '../lib/path.js';
 
-let root, word, word2, base2, dotSlot, vous, cta, arrow, url, freeLine, foot, logoImg, box1, box2, dot, y1;
+let root, word, word2, base2, dotSlot, vous, cta, arrow, url, freeLine, foot, logoImg, box1, box2, dot, y1, growth, gL;
 const CW = pick(11, 9);
 
 export async function build(ctx) {
@@ -60,6 +62,10 @@ export async function build(ctx) {
   dot = { x: d.x + d.w * 0.5, y: b2.y - r, r };
   box2.end = d.x;
   ctx.shared.dot = dot;
+  // Film « ligne » : sous « Vous développez votre entreprise », le trait dessine une courbe qui monte
+  growth = curve([[-40, pick(1420, 925)], [pick(160, 140), pick(1380, 890)], [pick(290, 260), pick(1405, 912)], [pick(470, 420), pick(1270, 815)],
+    [pick(620, 560), pick(1300, 840)], [pick(780, 700), pick(1150, 732)], [pick(930, 840), pick(1175, 752)], [pick(1060, 960), pick(1020, 640)], [W + 40, pick(960, 600)]]);
+  gL = lengths(growth);
 }
 
 async function tryLogo(parent) {
@@ -102,9 +108,20 @@ export function update(t, ctx) {
   });
 
   // La corde se tend au-dessus de la phrase, puis s'enroule vers la gauche et devient un point
-  if (t < T.write) {
-    const rIn = lerp(-60, W + 60, E.inOutCubic(prog(t, T.end + 0.05, T.end + 0.6)));
-    const rEnd = Math.min(rIn, lerp(W + 60, box1.x, E.inOutCubic(prog(t, T.vousOut - 0.15, T.write - 0.06))));
+  const flat = ctx.cord.flat;
+  if (flat && t < T.vousOut - 0.05) {
+    // La courbe de croissance se dessine, puis se tend en une ligne droite, à la hauteur de la signature
+    const tot = gL[gL.length - 1];
+    const h = tot * E.inOutCubic(prog(t, T.end + 0.3, T.vous2 + 0.6));
+    const pts = [];
+    for (let i = 0; i < growth.length && gL[i] <= h; i++) {
+      const e = E.inOutCubic(prog(t, T.vousOut - 0.45 + (1 - gL[i] / tot) * 0.1, T.vousOut - 0.05));
+      pts.push([lerp(growth[i][0], lerp(-60, W + 60, gL[i] / tot), e), lerp(growth[i][1], y1, e)]);
+    }
+    ctx.cord.draw(pts, { width: CW });
+  } else if (t < T.write) {
+    const rIn = flat ? W + 60 : lerp(-60, W + 60, E.inOutCubic(prog(t, T.end + 0.05, T.end + 0.6)));
+    const rEnd = Math.min(rIn, lerp(W + 60, box1.x, E.inOutCubic(prog(t, T.vousOut - (flat ? 0.05 : 0.15), T.write - 0.06))));
     const lEnd = lerp(-60, box1.x, E.inOutCubic(prog(t, T.vousOut, T.write)));
     if (rEnd - lEnd > 2) ctx.cord.draw([[lEnd, y1], [rEnd, y1]], { width: CW });
   }
