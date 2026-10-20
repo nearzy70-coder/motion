@@ -1,4 +1,4 @@
-# Desk to Desk — « Le Fil » v5
+# Desk to Desk — « Le Fil » v6
 
 Film publicitaire en motion design pour [Desk to Desk](https://www.desk-to-desk.com/), courtier en bureaux.
 **68 s, en français, avec la voix off ElevenLabs fournie par le client.** Livrable : **format carré 1:1** (1080 × 1080). Le code garde aussi une mise en page 9:16 (`--f 916`), non rendue.
@@ -17,6 +17,17 @@ Film publicitaire en motion design pour [Desk to Desk](https://www.desk-to-desk.
 | `renders/audio/le-fil-v3-voix.wav` | Voix seule, placée et traitée comme dans le film |
 | `renders/final/v1/` | Version 1 (33 s), conservée pour comparaison |
 | `research/` | Faits vérifiés et sources, storyboards v2 et v3, texte et placement de la voix off |
+
+## v6 : « Le Fil, en un seul trait » (autre version complète)
+
+**`renders/final/desk-to-desk_le-fil-v6-un-seul-trait_1x1_1080x1080.mp4`** (1:1, 68 s, même voix off).
+Tout le film tient en un seul trait continu :
+- l'intro « trait » ;
+- puis, sur l'aplat menthe, le conseiller, sa bulle et le chemin du brief aux clés ;
+- puis un chemin droit sur lequel chaque étape se dessine et réagit : coches, entonnoir, porte, balance, clé, calendrier ;
+- enfin l'Hexagone et ses villes, et une courbe de croissance qui devient la signature.
+
+Détails dans `research/storyboard-v3.md`.
 
 ## v5 finale : l'intro « trait »
 
@@ -97,10 +108,12 @@ src/
   timeline.js        repères calés sur la voix, placement de la voix (VO), mises en page 9:16 et 1:1
   main.js            calques, seek(t), respiration de caméra, lecteur web
   lib/rope.js        corde simulée (Verlet, contraintes de longueur et de courbure)
-  lib/cord.js        rendu de la cordelette : ombres, torsion, reflet, croisements
+  lib/cord.js        rendu de la cordelette : ombres, torsion, reflet, croisements (ou trait plat)
+  lib/stroke.js      trait continu : tracés SVG d'un seul trait, segments datés, boucles, caméra à ressort
   lib/texture.js     papier, encre de tampon (grain disponible mais désactivé)
   popup3d.js         maquette « pop-up » Three.js (trait d'architecte)
   scenes/            ouvertures : trait (v5 finale), pile (v4), pelote (3D), enquete ; puis pull, line, coverage, free, end
+                     ligne : tout l'après-drop du film « en un seul trait » (v6), à la place de line et coverage
   sheets/            formats, brief, map, plan, contract, keys, services
 audio/compose_v3.py  musique (synthèse + échantillons CC0), placement de la voix, ducking, mixage
 audio/dsp.py         filtres, réverbération, compression, banques d'échantillons

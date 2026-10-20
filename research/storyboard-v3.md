@@ -107,3 +107,30 @@ Exécution :
 - les icônes sont des tracés SVG d'un seul trait (le trait repasse sur lui-même plutôt que de lever la plume), échantillonnés tous les 4 px ;
 - la caméra est un ressort critique précalculé à 240 Hz, sur la position et le zoom (en logarithme) ;
 - le trait est plat, menthe, sans halo.
+
+## v6 : « Le Fil, en un seul trait » (tout le film)
+
+Demande du client : une autre version de tout le film, la voix off restant la même. Parti pris : prolonger l'intro
+« trait » validée sur tout le film. **Un seul trait continu raconte tout** : il dessine le problème, se tend au
+drop, puis devient un chemin droit, celui de Desk to Desk, sur lequel chaque étape se dessine. Les dessins
+réagissent à ce qui est dit. Rendu : `node scripts/render.mjs --f 11 --o trait --v ligne`.
+
+| Temps | Voix | Image |
+|-------|------|-------|
+| 0 – 15,25 s | Accroche, problème, le temps file | Intro « trait » (voir ci-dessus) |
+| 15,25 – 17 s | « Desk to Desk tire le fil. » | Store menthe ; le trait, à l'encre, arrive par la droite et souligne « tire le fil. » |
+| 17,3 – 19,4 s | « Un conseiller dédié. Un seul interlocuteur. » | Il descend la marge et dessine le portrait du conseiller, puis une bulle autour de « Un seul interlocuteur. » |
+| 20,1 – 22 s | « Du brief… jusqu'à la remise des clés. » | Un trait droit d'un document jusqu'à une clé |
+| 22,25 – 26,7 s | « Coworking ? Bureau opéré ? Bail commercial ? On vous aide à choisir. » | Retour au noir : le trait devient un chemin. Une table partagée, un bureau fermé, un local « 3/6/9 » ; recul pour comparer |
+| 27,1 – 29,7 s | Étape 1 | Une liste de critères ; le trait coche les cases une à une |
+| 30 – 33,3 s | Étape 2 | Un entonnoir : les offres y tombent, il se secoue, trois seulement passent et roulent sur le chemin |
+| 33,6 – 35,9 s | Étape 3 | Une porte se dessine et s'ouvre ; la lumière entre |
+| 36,6 – 40,4 s | Étape 4 | Une balance. Chaque mot (loyer, charges, travaux, durée) tombe sur un plateau et la fait pencher. À « durée », elle s'équilibre, et un cercle vif la valide |
+| 41,3 – 44,5 s | Étape 5 | Le trait écrit une signature, puis dessine une clé qui tourne |
+| 44,6 – 49 s | Services | Un contrat entouré d'une flèche de renégociation ; un calendrier, « 1 journée » entouré |
+| 49,3 – 54,5 s | Villes | Le trait dessine l'Hexagone, puis relie chaque ville au moment où elle est nommée, jusqu'à Bruxelles, Barcelone et Luxembourg |
+| 54,75 – 58,3 s | Gratuité | Store menthe, « gratuit.* » et mention |
+| 58,75 – 68 s | Signature | Sous « Vous développez votre entreprise », une courbe de croissance ; elle se tend en ligne droite et devient le point qui écrit « Desk to Desk / s'occupe du reste » |
+
+Les dessins du chemin sont factuels et génériques : pas de chiffres, pas d'adresses, pas de logos tiers. Le
+contour de la France est stylisé. Les villes sont celles qui ont une page sur le site (F13).
