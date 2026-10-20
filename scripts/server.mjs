@@ -31,13 +31,13 @@ export const CHROME_ARGS = ['--use-angle=swiftshader', '--enable-unsafe-swiftsha
 
 export const SIZES = { '916': [1080, 1920], '11': [1080, 1080] };
 
-export async function openStage(browser, port, format = '916') {
+export async function openStage(browser, port, format = '916', opening = '') {
   const [w, h] = SIZES[format];
   const page = await browser.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e)));
   page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
-  await page.goto(`http://127.0.0.1:${port}/src/index.html?f=${format}`);
+  await page.goto(`http://127.0.0.1:${port}/src/index.html?f=${format}${opening ? '&o=' + opening : ''}`);
   const ok = await page.evaluate(() => window.__ready);
   if (!ok) {
     const e = await page.evaluate(() => window.__error);

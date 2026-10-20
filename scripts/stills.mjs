@@ -11,17 +11,19 @@ fs.mkdirSync(out, { recursive: true });
 const argv = process.argv.slice(2);
 const fi = argv.indexOf('--f');
 const FORMAT = fi >= 0 ? argv.splice(fi, 2)[1] : '916';
+const oi = argv.indexOf('--o');
+const OPENING = oi >= 0 ? argv.splice(oi, 2)[1] : '';
 let times = argv.map(Number).filter((x) => !Number.isNaN(x));
 if (!times.length) times = Array.from({ length: 76 }, (_, i) => i);
 
 const { server, port } = await startServer();
 const browser = await chromium.launch({ args: CHROME_ARGS });
 try {
-  const { page, errors } = await openStage(browser, port, FORMAT);
+  const { page, errors } = await openStage(browser, port, FORMAT, OPENING);
   const files = [];
   for (const t of times) {
     await page.evaluate((t) => window.seek(t), t);
-    const f = path.join(out, `${FORMAT}_t${t.toFixed(2).padStart(6, '0')}.png`);
+    const f = path.join(out, `${FORMAT}${OPENING ? '_' + OPENING : ''}_t${t.toFixed(2).padStart(6, '0')}.png`);
     await page.screenshot({ path: f, type: 'png' });
     files.push(f);
   }

@@ -1,8 +1,10 @@
 // Orchestrateur v3 : calques, seek(t) déterministe, lecteur web (?play), formats (?f=916 | ?f=11).
-import { L, W, H, DURATION, FPS, T, BPM, VO } from './timeline.js';
+import { L, W, H, DURATION, FPS, T, BPM, VO, OPENING } from './timeline.js';
 import { makeCordLayer } from './lib/cord.js';
 import { E, prog, lerp } from './lib/ease.js';
 import * as pile from './scenes/pile.js';
+import * as pelote from './scenes/pelote.js';
+import * as enquete from './scenes/enquete.js';
 import * as pull from './scenes/pull.js';
 import * as line from './scenes/line.js';
 import * as coverage from './scenes/coverage.js';
@@ -42,9 +44,10 @@ const ctx = {
 // Pas de grain : aplats d'encre nets (retour client)
 const grain = { update() {} };
 
-// pile avant pull : le fil tiré au drop est celui qui a traversé la pile
-const BUILD = [end, pile, pull, line, coverage, free];
-const UPDATE = [pile, pull, line, coverage, free, end];
+// L'ouverture est construite avant pull : dans la version « pile », le fil tiré au drop est celui qui a cousu la pile
+const opening = { pile, pelote, enquete }[OPENING];
+const BUILD = [end, opening, pull, line, coverage, free];
+const UPDATE = [opening, pull, line, coverage, free, end];
 
 async function init() {
   await Promise.all([
@@ -54,7 +57,7 @@ async function init() {
   ]);
   await document.fonts.ready;
   for (const m of BUILD) await m.build(ctx);
-  window.__cues = { T, BPM, DURATION, VO, ...(ctx.shared.cues || {}) };
+  window.__cues = { T, BPM, DURATION, VO, OPENING, ...(ctx.shared.cues || {}) };
   seek(Number(params.get('t') || 0));
 }
 

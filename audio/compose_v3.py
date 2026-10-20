@@ -15,6 +15,7 @@ import json
 import os
 import re
 import subprocess
+import sys
 
 import numpy as np
 
@@ -22,7 +23,10 @@ from dsp import (Bus, Instrument, SR, bank, bp, compress, convolve, envelope_db,
                  one, pingpong, rng, smooth_gain, soft_limit, upright_piano, write_wav)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CUES = json.load(open(os.path.join(ROOT, "audio", "cues.json")))
+# Variante d'ouverture : « pile » (v4, par défaut), « pelote » ou « enquete » (repères dans audio/cues-<variante>.json)
+VARIANT = sys.argv[1] if len(sys.argv) > 1 else ""
+CUES = json.load(open(os.path.join(ROOT, "audio", f"cues-{VARIANT}.json" if VARIANT else "cues.json")))
+TAG = VARIANT or "v3"
 T = CUES["T"]
 DUR = float(CUES["DURATION"])
 N = int(SR * DUR)
@@ -205,6 +209,7 @@ CLACK = one(P1 + "varWood/wood_click_pp*.wav") + one(P1 + "varWood/wood_click_mp
 CLAVES = one(P1 + "varWood/claves_pp*.wav") + one(P1 + "varWood/claves_mp.wav")
 GUIRO = one(P1 + "varWood/guiro_long*.wav")
 SLAP = one(P1 + "varWood/slapstick_quiet*.wav")
+RATCHET = one(P1 + "varWood/ratchet*.wav")
 BDRUM = one(P1 + "drums/bass/bdrum_muted_mf_*.wav")
 SLEIGH = one("Miscellania Raw/*/sleighbell1_hit_quiet.wav") + one("Miscellania Raw/*/sleighbell1_hit_[12].wav")
 
@@ -302,7 +307,10 @@ comp(T["strike"], "Bbm6", 1.6, 0.45, 0.9)
 bass_b.add(bass(34, 1.2, 0.55), T["strike"])
 for i, m in enumerate([84, 79, 77, 73]):
     pl_b.add(pluck(m, 0.22 - 0.03 * i, 0.5), T["strike"] + 0.06 + i * 0.07, pan=0.3 - 0.2 * i)
-foley_b.add(marker(0.24, 0.15), T["strike"], pan=0.15)                 # trait de feutre sur « simple »
+if not VARIANT:
+    foley_b.add(marker(0.24, 0.15), T["strike"], pan=0.15)             # trait de feutre sur « simple »
+if VARIANT == "pelote":
+    pl_b.add(pluck(53, 0.45, 1.4), T["strike"], pan=0.0)                 # le fil pincé vibre
 reverse_swell(at(-5), "Dm9", 0.9, 0.35)
 hats16(at(-6, 3.0), at(-5), 0.25)
 
@@ -334,7 +342,22 @@ for k, d in enumerate(CUES["drops"]):
     t, spoken = d["t"], d["spoken"]
     pl_b.add(pluck(TAG_NOTES[k], 0.5 if spoken else 0.3, 0.55), t, pan=(-0.35, 0.35)[k % 2])
 # Chaque mot qui touche la pile : un coup sourd, proportionnel au choc
-for l in CUES["landings"]:
+for p_ in CUES.get("pins", []):                 # tableau d'enquête : chaque punaise plantée
+    hit(foley_b, CLACK, p_["t"], 0.55 * (0.5 + p_["s"]), rng.uniform(-0.3, 0.3), semis=-4)
+    foley_b.add(thud(0.3 + 0.4 * p_["s"]), p_["t"], 0.22)
+for k_, tp in enumerate(CUES.get("pops", [])):  # les punaises sautent l'une après l'autre
+    hit(foley_b, CLAVES, tp, 0.32, (-0.4, 0.4)[k_ % 2], semis=6 + 0.4 * k_, dur=0.12, rel=0.05)
+if "wind" in CUES:                              # la pelote s'enroule : un frottement continu, de plus en plus fourni
+    w0, w1 = CUES["wind"]
+    tt = w0
+    while tt < w1:
+        hit(foley_b, SHAKER, tt, 0.9 * (1 - 0.6 * (tt - w0) / (w1 - w0)), rng.uniform(-0.2, 0.2))
+        tt += BEAT / 4
+if "unravel" in CUES:                           # elle se dévide d'un coup : une crécelle qui s'emballe
+    u0, u1 = CUES["unravel"]
+    for k_ in range(3):
+        hit(foley_b, RATCHET, u0 + k_ * (u1 - u0) / 3, 0.5, (-0.3, 0.0, 0.3)[k_], semis=2 * k_, dur=(u1 - u0) / 3 + 0.05, rel=0.06)
+for l in CUES.get("landings", []):
     foley_b.add(thud(0.25 + 0.75 * l["s"]), l["t"], 0.3, pan=rng.uniform(-0.25, 0.25))
 # « Et pendant ce temps… le temps file » : le temps devient un tic-tac de claves, puis roulement et arrêt net
 t_tick = T["timeFlies"]
@@ -352,7 +375,8 @@ for b in range(2):
     K(t0 + b * BEAT, 0.8)
 hats16(t0, t0 + 2 * BEAT, 0.4)
 STOP = t0 + 2 * BEAT                    # silence avant le drop : seule la corde se tend
-hit(foley_b, GUIRO, T["thread"], 0.2, 0.1, semis=3, dur=0.36, rel=0.08)  # l'aiguille coud la pile
+if not VARIANT:
+    hit(foley_b, GUIRO, T["thread"], 0.2, 0.1, semis=3, dur=0.36, rel=0.08)  # l'aiguille coud la pile
 hit(foley_b, GUIRO, T["pull"] - 0.1, 0.22, -0.1, semis=-7, dur=0.7, rel=0.2)  # le fil se tend
 reverse_swell(A0, "Bbmaj9", 0.95, 0.55)
 
@@ -531,9 +555,9 @@ for _ in range(3):
 mix = soft_limit(mix, -2.0)
 
 out = os.path.join(ROOT, "renders", "audio")
-write_wav(os.path.join(out, "le-fil-v3-mix.wav"), mix)
-write_wav(os.path.join(out, "le-fil-v3-musique.wav"), soft_limit(music_out * 10 ** (-3 / 20) / np.max(np.abs(music_out)), -1.0))
-write_wav(os.path.join(out, "le-fil-v3-voix.wav"), soft_limit(v * fade, -1.0))
+write_wav(os.path.join(out, f"le-fil-{TAG}-mix.wav"), mix)
+write_wav(os.path.join(out, f"le-fil-{TAG}-musique.wav"), soft_limit(music_out * 10 ** (-3 / 20) / np.max(np.abs(music_out)), -1.0))
+write_wav(os.path.join(out, f"le-fil-{TAG}-voix.wav"), soft_limit(v * fade, -1.0))
 
 if os.environ.get("STEMS"):
     secs = [(0, 5.25), (5.25, 14.3), (15.25, 22.25), (22.25, 49.75), (49.75, 54.75), (54.75, 58.75), (58.75, 68)]

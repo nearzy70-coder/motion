@@ -12,7 +12,10 @@ const TOP_Y = pick(44, 34);
 let rope, mint, brand, subs, beads, slots, total, tA, kBead, drawNeedle, s0;
 
 export function build(ctx) {
+  mint = el('div', { cls: 'layer', style: { background: 'var(--mint)' } }, ctx.layers.mint);
+  buildBrand(ctx);
   const tg = ctx.shared.tangle;
+  if (!tg) return; // ouverture qui amène elle-même un fil droit à la hauteur du store (pelote, enquête)
   tA = tg.tAnchor;
   s0 = tg.tailAt(tA);
   const init = slice(tg.path, tg.Ls, s0, tg.headAt(tA));
@@ -36,9 +39,9 @@ export function build(ctx) {
     endA: (t) => [lerp(a0[0], x0, e(t)), lerp(a0[1], L.pullY, e(t))],
     endB: (t) => [lerp(b0[0], x0 + total * 0.992, e(t)), lerp(b0[1], L.pullY, e(t))],
   });
+}
 
-  mint = el('div', { cls: 'layer', style: { background: 'var(--mint)' } }, ctx.layers.mint);
-
+function buildBrand(ctx) {
   // Texte sur l'aplat menthe
   brand = el('div', { cls: 'abs', style: { left: L.mx + 'px', top: pick('660px', '236px'), color: 'var(--ink)' } }, ctx.layers.text);
   const big = (html) => wordsLine(brand, html, L.bigSize, { marginBottom: pick('8px', '4px') });
@@ -65,8 +68,13 @@ function cordY(t) {
 }
 
 export function update(t, ctx) {
-  const phys = t >= tA && t < T.line;
+  const phys = rope && t >= tA && t < T.line;
   let blindTop = H;
+  if (!rope && t >= T.blind && t < T.line) {
+    const y = L.pullY + cordY(t);
+    ctx.cord.draw([[-40, y], [W + 40, y]], { width: CORD_W, shadow: 1.4 });
+    blindTop = y;
+  }
   if (phys) {
     const dy = cordY(t);
     // Le fil, très long (il a cousu toute la pile), descend jusqu'à la ligne du store pendant la traction
