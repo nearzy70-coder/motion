@@ -17,7 +17,7 @@ const CITIES = [
 ];
 const BOX = pick({ x0: 150, x1: 930, y0: 530, y1: 1500 }, { x0: 470, x1: 1000, y0: 90, y1: 1010 });
 const CW = pick(10, 8);
-const T0 = T.map + 0.45, T1 = T.free - 0.75;
+const T0 = T.map + 0.25, T1 = T.free - 0.75;
 
 let root, gsvg, cityEls, route, Lr, arrive, head, heads, headH;
 

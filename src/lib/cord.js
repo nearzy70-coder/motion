@@ -11,7 +11,12 @@ export function makeCordLayer(canvas, W, H) {
   const sg = sc.getContext('2d');
   return {
     g,
-    clear() { g.clearRect(0, 0, W, H); },
+    clear() {
+      g.clearRect(0, 0, W, H);
+      // Chromium ne republie pas une toile seulement vidée : un pixel quasi transparent force la mise à jour
+      g.fillStyle = 'rgba(0,0,0,0.004)';
+      g.fillRect(0, 0, 1, 1);
+    },
     draw(pts, o = {}) {
       const w = o.width ?? 10;
       if ((o.shadow ?? 1) > 0 && pts.length > 1) {

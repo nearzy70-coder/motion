@@ -28,6 +28,21 @@ Relevé effectué le 2026-10-20 pour le film « Le Fil ».
 | F12 | Contact | Téléphone +33 1 88 83 73 37, contact@desk-to-desk.com, formulaire, visio. « Votre conseiller à disposition pour vous accompagner gratuitement dans votre recherche » | /contact, pages ville | CTA « Parler à un conseiller » + desk-to-desk.com |
 | F13 | Couverture géographique (France et Europe) | Titre d'accueil « Bureaux meublés à louer, France et Europe » ; pages Paris (et arrondissements, dont Paris 2e Sentier, Paris 9e Opéra), Lyon, Lille, Bordeaux, Barcelone, Luxembourg… | / et pages ville | Contexte (carte de Paris illustrative) |
 
+## Ajouts de la v2 (75 s)
+
+| Élément du film | Base |
+|-----------------|------|
+| « Coworking, bureau opéré ou bail commercial ? » + définitions courtes | Formats recherchés par Desk to Desk (F7, F8). Les définitions sont des notions générales du marché : coworking = postes flexibles en espace partagé ; bureau opéré = bureaux privatifs clés en main, services inclus, un contrat de services ; bail commercial = locaux propres, bail 3/6/9 (bail commercial français standard) |
+| Cahier des charges : effectif, quartiers, format, budget, entrée, enjeux | F5 (« effectif, budget, quartiers, enjeux ») ; valeurs illustratives |
+| « On passe le marché au crible » / carte avec offres écartées | Sélection d'offres (F5) ; carte illustrative |
+| « On visite avec vous » | Visites organisées et accompagnées (F5) |
+| « On négocie avec le bailleur » : loyer, charges, travaux, durée | F6, F9 |
+| « Jusqu'à la remise des clés » ; « Démarches, signature, emménagement » | F3, F5 |
+| « Déjà installés ? » Renégociation : loyer, charges, travaux, durée | F9 |
+| Location ponctuelle : salles de réunion, bureaux à la journée, espaces événementiels | F10 |
+| « En France et en Europe » : Bordeaux, Paris, Lille, Bruxelles, Luxembourg, Lyon, Barcelone | F13 : villes disposant d'une page de recherche dédiée sur le site (positions réelles, carte stylisée) |
+| « Pour le locataire, c'est gratuit.* » + mention | F11 |
+
 ## Informations relevées mais volontairement exclues
 
 | Information | Raison de l'exclusion |

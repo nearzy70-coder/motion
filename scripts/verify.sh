@@ -13,6 +13,9 @@ for f in renders/final/*.mp4; do
   echo "-- images noires (> 0,1 s) et images figées (> 1,5 s)"
   ffmpeg -hide_banner -nostats -i "$f" -vf "blackdetect=d=0.1:pix_th=0.02,freezedetect=n=0.001:d=1.5" -an -f null - 2>&1 | grep -E "black_start|freeze_start|freeze_end|freeze_duration" || echo "aucune"
 done
-mkdir -p renders/stills
-ffmpeg -y -v error -i renders/final/desk-to-desk_le-fil_9x16_1080x1920.mp4 -vf "fps=2,scale=216:384,tile=11x6:padding=4:color=0x222222" -frames:v 1 -q:v 3 renders/stills/planche-contact.jpg
-echo "Planche : renders/stills/planche-contact.jpg"
+for f in renders/final/desk-to-desk_le-fil-v2_*.mp4; do
+  base=$(basename "$f" .mp4); fmt=${base##*v2_}; fmt=${fmt%%_*}
+  if [ "$fmt" = "1x1" ]; then sc=240:240; tile=10x8; else sc=180:320; tile=10x8; fi
+  ffmpeg -y -v error -i "$f" -vf "fps=1,scale=$sc,tile=$tile:padding=4:color=0x222222" -frames:v 1 -q:v 3 "renders/final/planche-contact-v2_${fmt}.jpg"
+  echo "Planche : renders/final/planche-contact-v2_${fmt}.jpg"
+done

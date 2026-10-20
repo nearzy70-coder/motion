@@ -35,7 +35,7 @@ export function build(it) {
   const stamp = el('div', {
     cls: 'abs',
     style: {
-      left: '400px', top: '738px', padding: '14px 30px', border: '7px solid #1C9E80', borderRadius: '14px',
+      left: '352px', top: '730px', padding: '14px 30px', border: '7px solid #1C9E80', borderRadius: '14px',
       color: '#1C9E80', fontFamily: 'Parkinsans', fontWeight: '700', fontSize: '64px', letterSpacing: '0.06em', textTransform: 'uppercase',
       transformOrigin: '50% 50%', mixBlendMode: 'multiply',
       WebkitMaskImage: `url(${inkMask()})`, WebkitMaskSize: '100% 100%', maskImage: `url(${inkMask()})`, maskSize: '100% 100%',
