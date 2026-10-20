@@ -6,7 +6,7 @@ Retours client sur la v1 : film plus long (environ 75 s) et plus informatif ; mo
 
 | Symptôme | Remplacement en v2 |
 |----------|---------------------|
-| Fond sombre + trait menthe « lumineux » + grille, partout | Matières : grain argentique, vraie cordelette (torsion, ombre portée), papier ; **aplats menthe plein cadre** pour les temps forts |
+| Fond sombre + trait menthe « lumineux » + grille, partout | Matières : vraie cordelette (torsion, ombre portée), papier ; **aplats menthe plein cadre** pour les temps forts ; encre unie (le grain testé a été retiré après retour client) |
 | Pastilles arrondies et cartes d'interface façon gabarit SaaS | Objets réels : étiquettes en papier nouées au fil, documents suspendus par des pinces à linge, carte punaisée, tampon encreur, trousseau de clés |
 | Sur-titres en capitales espacées (« ÉTAPE 01 · LE BRIEF ») | Grand chiffre maigre en menthe + phrase en casse normale ; typographie française (espaces insécables, « ») |
 | Même révélation par masque sur chaque ligne | Chorégraphies variées : mot à mot, coupes franches sur les temps, texte interrompu par le fil, objets qui tombent et se balancent |

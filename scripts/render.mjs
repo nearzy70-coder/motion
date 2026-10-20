@@ -90,12 +90,13 @@ if (hasAudio) {
 
 // --- Vidéo : moyenne des sous-images (flou de mouvement) par scripts/blend.py, puis encodage
 fs.writeFileSync(path.join(framesDir, 'manifest.json'), JSON.stringify(manifest));
-const vf = 'scale=out_color_matrix=bt709:out_range=tv:flags=lanczos+accurate_rnd+full_chroma_int,format=yuv420p,noise=c0s=7:c0f=t';
+// Pas de grain ajouté : sur les aplats d'encre, un bruit temporel ressemble à de la neige télé une fois compressé
+const vf = 'scale=out_color_matrix=bt709:out_range=tv:flags=lanczos+accurate_rnd+full_chroma_int,format=yuv420p';
 const suffix = FROM === 0 && TO === spec.DURATION ? '' : `_${FROM}-${TO}s`;
 const out = path.join(outDir, `${NAME}_${LABEL}_${SIZE}${suffix}.mp4`);
 const enc = ['-y', '-hide_banner', '-loglevel', 'error', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', SIZE, '-framerate', String(FPS), '-i', '-'];
 if (hasAudio) enc.push('-i', wav);
-enc.push('-vf', vf, '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-profile:v', 'high', '-level:v', '4.2',
+enc.push('-vf', vf, '-c:v', 'libx264', '-preset', 'slow', '-crf', '16', '-tune', 'animation', '-profile:v', 'high', '-level:v', '4.2',
   '-g', String(FPS * 2), '-movflags', '+faststart', '-colorspace', 'bt709', '-color_primaries', 'bt709', '-color_trc', 'bt709', '-color_range', 'tv');
 if (hasAudio) enc.push('-af', afilter, '-c:a', 'aac', '-b:a', '192k', '-ar', '48000', '-ac', '2', '-shortest');
 enc.push(out);

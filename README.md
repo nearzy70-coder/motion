@@ -9,7 +9,7 @@ Version longue : **75 s**, en français, compréhensible sans le son. **Livrable
 
 | Fichier | Contenu |
 |---------|---------|
-| `renders/final/desk-to-desk_le-fil-v2_1x1_1080x1080.mp4` | **Film final** : 1080 × 1080, 30 i/s, H.264 High, BT.709, AAC 192 kb/s 48 kHz, −14 LUFS |
+| `renders/final/desk-to-desk_le-fil-v2_1x1_1080x1080.mp4` | **Film final, pleine qualité** : 1080 × 1080, 30 i/s, H.264 High (CRF 16), BT.709, AAC 192 kb/s 48 kHz, −14 LUFS |
 | `renders/audio/le-fil-v2-mix.wav` | Bande-son originale avant normalisation (48 kHz, 16 bits) |
 | `renders/final/planche-contact-v2_1x1.jpg` | Planche contact extraite du MP4 (une image par seconde) |
 | `renders/final/v1/` | Version 1 (33 s), conservée pour comparaison |
@@ -22,7 +22,7 @@ Version longue : **75 s**, en français, compréhensible sans le son. **Livrable
   - une vraie cordelette tressée, simulée physiquement ;
   - des étiquettes et des documents en papier suspendus par des pinces à linge ;
   - une carte punaisée, une maquette 3D « pop-up » au trait d'architecte, un tampon encreur, un trousseau de clés ;
-  - des aplats menthe plein cadre et du grain argentique ;
+  - des aplats menthe plein cadre, sur une encre unie et nette (le grain a été retiré : il donnait un aspect « télé des années 2000 ») ;
   - plus de pastilles d'interface ni de sur-titres en capitales espacées.
 - **Motion plus soigné** : physique de corde, inertie des feuilles au travelling, respiration de caméra, flou de mouvement adaptatif (3 à 12 sous-images par image, obturateur 180°).
 - **Son entièrement acoustique** : instruments réels échantillonnés (piano droit, pizzicati, cordes, harpe, marimba, glockenspiel, timbales) et bruitages réels (bois, slapstick, shaker, tambourin, guiro, grelots, cymbale aux mailloches). Aucun bip ni souffle synthétique.
@@ -54,7 +54,7 @@ src/
   main.js            calques, seek(t), respiration de caméra, lecteur web
   lib/rope.js        corde simulée (Verlet, contraintes de longueur et de courbure)
   lib/cord.js        rendu de la cordelette : ombres, torsion, reflet, croisements
-  lib/texture.js     grain, papier, encre de tampon
+  lib/texture.js     papier, encre de tampon (grain disponible mais désactivé)
   popup3d.js         maquette « pop-up » Three.js (trait d'architecte)
   scenes/            hook, tangle, pull, line (corde à linge + caméra), coverage, free, end
   sheets/            formats, brief, map, plan, contract, keys, services

@@ -1,7 +1,6 @@
 // Orchestrateur v2 : calques, seek(t) déterministe, lecteur web (?play), formats (?f=916 | ?f=11).
 import { L, W, H, DURATION, FPS, T, BPM } from './timeline.js';
 import { makeCordLayer } from './lib/cord.js';
-import { makeGrain } from './lib/texture.js';
 import { E, prog, lerp } from './lib/ease.js';
 import * as hook from './scenes/hook.js';
 import * as tangle from './scenes/tangle.js';
@@ -41,8 +40,8 @@ const ctx = {
     return { x: (r.left - s.left) / k, y: (r.top - s.top) / k, w: r.width / k, h: r.height / k };
   },
 };
-// Le grain est ajouté à l'encodage (FFmpeg) ; dans le navigateur, seulement pour le lecteur temps réel
-const grain = params.has('play') ? makeGrain(layers.grain, W, H, 0.075) : { update() {} };
+// Pas de grain : aplats d'encre nets (retour client)
+const grain = { update() {} };
 
 // end est construit avant hook : le fil de l'accroche et la fin partagent des mesures
 const BUILD = [end, hook, tangle, pull, line, coverage, free];
