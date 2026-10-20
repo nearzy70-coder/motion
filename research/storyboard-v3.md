@@ -84,3 +84,26 @@ La v4 (pile de mots) reste l'ouverture par défaut.
 | 4,8 – 13,6 s | Les fiches sont punaisées une à une avec la voix : grandes fiches pour les critères dits, post-it pour les autres. Un fil menthe va de punaise en punaise, d'autres fils relient les fiches ; la caméra suit chaque nouvelle fiche | Coup sec de chaque punaise, note de pluck |
 | 14,25 s | Le bout du fil est attrapé et tiré vers la droite | Silence |
 | 14,65 – 15,2 s | Les punaises sautent l'une après l'autre depuis le bout tiré, les fiches tombent, le tableau se vide : il ne reste qu'un fil droit | Rafale de petits coups (punaises), puis drop |
+
+## v5 finale : « le trait » (`src/scenes/trait.js`)
+
+Demande du client : une intro « hyper originale », digne d'un grand studio. Parti pris : **un seul trait continu**,
+le fil de Desk to Desk, dessine tout le problème en une ligne, sans lever la plume. Puis on tire ce fil, et tout le
+dessin se tend en une ligne droite. Le fil n'est plus un objet : il devient l'outil du dessin.
+
+| Temps | Voix | Image | Son |
+|-------|------|-------|-----|
+| 0 – 1,45 s | « Trouver des bureaux… » | Le trait entre par la gauche et dessine un immeuble d'un seul geste | Feutre sur papier, piano électrique |
+| 1,45 – 2,2 s | « …c'est simple. » | Un trait parfaitement droit, puis une grande coche | |
+| 2,5 – 3,15 s | « Enfin… » | La plume hésite et dessine un point d'interrogation | Arrêt de la musique |
+| 3,15 – 4,35 s | « …sur le papier. » | Le trait encadre tout le début d'une feuille au coin plié ; « Sur le papier. » | |
+| 4,75 – 6,8 s | « Parce que très vite, tout s'emmêle. » | La plume s'emballe en boucles, la caméra la suit à toute vitesse ; le dessin ancien s'assombrit | Feutre nerveux, le groove démarre |
+| 6,8 – 11,3 s | « La surface. Le budget. Le quartier. Le bail. Les visites. » | Un dessin par critère, au mot près : plan coté, pile de pièces, épingle sur des rues, bail signé, porte entrouverte | Une note par critère |
+| 11,3 – 12,3 s | (soupir) | La plume repasse partout ; la caméra recule : vu de loin, tout le dessin n'est qu'un écheveau, qui se rallume | Impact sourd, cymbale douce |
+| 12,3 – 14,25 s | « Et pendant ce temps… le temps file. » | Le trait encercle le tout d'une horloge ; l'aiguille fait deux tours sur « file » | Tic-tac de claves, l'aiguille qui file |
+| 14,6 – 15,2 s | (silence) | On tire le bout : l'horloge se déroule d'abord, puis les boucles, les critères, l'immeuble. Tout le dessin se tend en vague jusqu'à une seule ligne droite | Zip qui monte, puis drop |
+
+Exécution :
+- les icônes sont des tracés SVG d'un seul trait (le trait repasse sur lui-même plutôt que de lever la plume), échantillonnés tous les 4 px ;
+- la caméra est un ressort critique précalculé à 240 Hz, sur la position et le zoom (en logarithme) ;
+- le trait est plat, menthe, sans halo.

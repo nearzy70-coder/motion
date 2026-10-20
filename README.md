@@ -1,4 +1,4 @@
-# Desk to Desk — « Le Fil » v4
+# Desk to Desk — « Le Fil » v5
 
 Film publicitaire en motion design pour [Desk to Desk](https://www.desk-to-desk.com/), courtier en bureaux.
 **68 s, en français, avec la voix off ElevenLabs fournie par le client.** Livrable : **format carré 1:1** (1080 × 1080). Le code garde aussi une mise en page 9:16 (`--f 916`), non rendue.
@@ -17,6 +17,16 @@ Film publicitaire en motion design pour [Desk to Desk](https://www.desk-to-desk.
 | `renders/audio/le-fil-v3-voix.wav` | Voix seule, placée et traitée comme dans le film |
 | `renders/final/v1/` | Version 1 (33 s), conservée pour comparaison |
 | `research/` | Faits vérifiés et sources, storyboards v2 et v3, texte et placement de la voix off |
+
+## v5 finale : l'intro « trait »
+
+**Livrable final : `renders/final/desk-to-desk_le-fil-v5-final_1x1_1080x1080.mp4`** (1:1, 68 s).
+Un seul trait continu dessine tout le problème, sans lever la plume :
+- l'immeuble, la coche « c'est simple », le point d'interrogation et la feuille ;
+- puis, en boucles, un dessin par critère dit par la voix ;
+- le recul révèle l'écheveau, et une horloge l'encercle.
+
+Au tirage, tout le dessin se tend en une ligne droite, puis le drop. Détails dans `research/storyboard-v3.md`.
 
 ## v5 : deux autres ouvertures, au choix
 
@@ -90,7 +100,7 @@ src/
   lib/cord.js        rendu de la cordelette : ombres, torsion, reflet, croisements
   lib/texture.js     papier, encre de tampon (grain disponible mais désactivé)
   popup3d.js         maquette « pop-up » Three.js (trait d'architecte)
-  scenes/            ouvertures : pile (v4), pelote (3D), enquete ; puis pull, line (corde à linge + caméra), coverage, free, end
+  scenes/            ouvertures : trait (v5 finale), pile (v4), pelote (3D), enquete ; puis pull, line, coverage, free, end
   sheets/            formats, brief, map, plan, contract, keys, services
 audio/compose_v3.py  musique (synthèse + échantillons CC0), placement de la voix, ducking, mixage
 audio/dsp.py         filtres, réverbération, compression, banques d'échantillons
