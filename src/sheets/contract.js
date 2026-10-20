@@ -6,7 +6,7 @@ import { inkMask } from '../lib/texture.js';
 import { T } from '../timeline.js';
 
 const CLAUSES = [['Art. 3', 'Loyer'], ['Art. 4', 'Charges'], ['Art. 7', 'Travaux'], ['Art. 9', 'Durée']];
-const STAMP_AT = T.s4 + 2.5 - T.s4; // sur le temps fort de la mesure suivante
+const STAMP_AT = T.stamp - T.s4; // juste après « durée », dans la voix
 
 export function build(it) {
   const s = it.sheet;
@@ -47,7 +47,7 @@ export function build(it) {
 
 export function update(it, tl) {
   it.clauses.forEach((c, i) => {
-    const t0 = 0.45 + i * 0.42;
+    const t0 = T.clauses[i] - T.s4;
     c.path.setAttribute('stroke-dashoffset', (1 - E.inOutCubic(prog(tl, t0, t0 + 0.35))).toFixed(4));
     c.cp.setAttribute('stroke-dashoffset', (1 - E.inOutCubic(prog(tl, t0 + 0.25, t0 + 0.45))).toFixed(4));
   });

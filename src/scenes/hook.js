@@ -30,7 +30,7 @@ export function update(t) {
   show(root, on);
   if (!on) return;
   // Entrées : chaque ligne monte dans son cadre, légèrement décalée
-  const ins = [T.l1, T.l1 + 0.14, T.l2];
+  const ins = [T.l1, T.l1 + 0.45, T.l2];
   lines.forEach((ln, i) => {
     const p = E.enter(prog(t, ins[i], ins[i] + 0.8));
     const q = E.exit(prog(t, T.hookOut + i * 0.06, T.hookOut + 0.5 + i * 0.06));

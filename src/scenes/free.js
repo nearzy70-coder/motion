@@ -21,7 +21,7 @@ export function build(ctx) {
   big = { wrap: bw, inner: el('span', { html: 'gratuit.<span style="font-size:0.42em;vertical-align:0.95em;margin-left:0.04em">*</span>' }, bw) };
 }
 
-export const blindY = (t) => lerp(H + 30, TOP_Y, blindEase(prog(t, T.free, T.free + 0.62)));
+export const blindY = (t) => lerp(H + 30, TOP_Y, blindEase(prog(t, T.free, T.free + 0.55)));
 
 export function update(t, ctx) {
   const on = t >= T.free && t < T.end;
@@ -30,8 +30,9 @@ export function update(t, ctx) {
   const y = blindY(t);
   mint.style.clipPath = `inset(${Math.max(0, y).toFixed(2)}px 0 0 0)`;
   ctx.cord.draw([[-40, y], [W + 40, y]], { width: CW, shadow: 1.4 });
+  // « Pour le locataire, » / « c'est » / « gratuit.* » avec la voix (« Et pour vous, c'est gratuit »)
   [...lead, big].forEach((ln, i) => {
-    const t0 = T.free + 0.68 + i * 0.16 + (i === 2 ? 0.12 : 0);
+    const t0 = [T.free1, T.free2, T.free3][i];
     const p = E.enter(prog(t, t0, t0 + 0.75));
     ln.inner.style.transform = `translate3d(0,${((1 - p) * 135).toFixed(2)}%,0)`;
   });

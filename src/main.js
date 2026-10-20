@@ -1,5 +1,5 @@
-// Orchestrateur v2 : calques, seek(t) déterministe, lecteur web (?play), formats (?f=916 | ?f=11).
-import { L, W, H, DURATION, FPS, T, BPM } from './timeline.js';
+// Orchestrateur v3 : calques, seek(t) déterministe, lecteur web (?play), formats (?f=916 | ?f=11).
+import { L, W, H, DURATION, FPS, T, BPM, VO } from './timeline.js';
 import { makeCordLayer } from './lib/cord.js';
 import { E, prog, lerp } from './lib/ease.js';
 import * as hook from './scenes/hook.js';
@@ -55,22 +55,22 @@ async function init() {
   ]);
   await document.fonts.ready;
   for (const m of BUILD) await m.build(ctx);
-  window.__cues = { T, BPM, DURATION, ...(ctx.shared.cues || {}) };
+  window.__cues = { T, BPM, DURATION, VO, ...(ctx.shared.cues || {}) };
   seek(Number(params.get('t') || 0));
 }
 
-// Respiration de caméra sur les plans fixes : lente avancée, recul franc quand on tire le fil.
-// Chaque segment repart de 1 sur une coupe franche (20 s, 57,5 s, 67,5 s), jamais en plein mouvement.
+// Respiration de caméra sur les plans fixes (lente avancée, recul franc quand on tire le fil),
+// plus de courtes impulsions sur les temps forts : le drop, le coup de tampon, le point final.
+const PUNCH = [[T.blind, 0.035], [T.stamp, 0.014], [T.dot, 0.016]];
 function camZoom(t) {
-  if (t < T.pull) return 1 + 0.05 * E.inOutCubic(prog(t, 0, T.pull));
-  if (t < T.line) {
-    const back = lerp(1.05, 1, E.outCubic(prog(t, T.pull, T.pull + 0.7)));
-    return back + 0.025 * E.inOutCubic(prog(t, T.brand, T.line));
-  }
-  if (t < T.map) return 1;
-  if (t < T.free) return 1 + 0.035 * E.inOutCubic(prog(t, T.map, T.free + 0.6));
-  if (t < T.end) return 1 + 0.035 * E.inOutCubic(prog(t, T.map, T.free + 0.6)) + 0.02 * E.inOutCubic(prog(t, T.free + 0.6, T.end));
-  return 1 + 0.02 * E.inOutCubic(prog(t, T.end, 75));
+  let z;
+  if (t < T.pull) z = 1 + 0.05 * E.inOutCubic(prog(t, 0, T.pull));
+  else if (t < T.line) z = lerp(1.05, 1, E.outCubic(prog(t, T.pull, T.pull + 0.5))) + 0.025 * E.inOutCubic(prog(t, T.brand[0], T.line));
+  else if (t < T.map) z = 1;
+  else if (t < T.end) z = 1 + 0.035 * E.inOutCubic(prog(t, T.map, T.free + 0.6)) + 0.02 * E.inOutCubic(prog(t, T.free + 0.6, T.end));
+  else z = 1 + 0.025 * E.inOutCubic(prog(t, T.end, DURATION));
+  for (const [t0, a] of PUNCH) if (t >= t0) z += a * (1 - E.outCubic(prog(t, t0, t0 + 0.5)));
+  return z;
 }
 const zoomLayers = LAYERS.filter((n) => n !== 'grain').map((n) => layers[n]);
 
@@ -108,7 +108,7 @@ if (params.has('play')) {
   controls.id = 'controls';
   controls.innerHTML = '<button id="pp">Lecture</button><input id="scrub" type="range" min="0" max="' + DURATION + '" step="0.001" value="0"><span id="tc">0.00 s</span>';
   document.body.appendChild(controls);
-  const audio = new Audio('../renders/audio/le-fil-v2-mix.wav');
+  const audio = new Audio('../renders/audio/le-fil-v3-mix.wav');
   const pp = controls.querySelector('#pp'), scrub = controls.querySelector('#scrub'), tc = controls.querySelector('#tc');
   let playing = false, t0 = 0, base = 0;
   const now = () => (playing ? base + (performance.now() - t0) / 1000 : base);

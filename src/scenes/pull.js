@@ -54,7 +54,7 @@ function wordsLine(parent, text, size, style = {}) {
 }
 
 function cordY(t) {
-  return lerp(0, TOP_Y - L.pullY, blindEase(prog(t, T.blind, T.blind + 0.62)));
+  return lerp(0, TOP_Y - L.pullY, blindEase(prog(t, T.blind, T.blind + 0.5)));
 }
 
 export function update(t, ctx) {
@@ -85,16 +85,17 @@ export function update(t, ctx) {
   show(mint, t >= T.blind && t < T.line);
   if (t >= T.blind && t < T.line) mint.style.clipPath = `inset(${Math.max(0, blindTop).toFixed(2)}px 0 0 0)`;
 
-  const bOn = t >= T.brand - 0.05 && t < T.line;
+  const bOn = t >= T.brand[0] - 0.05 && t < T.line;
   show(brand, bOn);
   if (bOn) {
     const words = brand.querySelectorAll('.word');
     const times = [];
-    // « Desk to Desk » puis « tire le fil. », puis les trois sous-titres sur les temps
-    const starts = [T.brand, T.brand + 0.42, T.sub1, T.sub2, T.sub3];
+    // « Desk to Desk » et « tire le fil. » mot à mot avec la voix, puis les trois sous-titres sur leurs phrases
+    const starts = [T.brand, T.brand2, T.sub1, T.sub2, T.sub3];
     let wi = 0;
     brand.querySelectorAll('.display').forEach((ln, li) => {
-      ln.querySelectorAll('.word').forEach((w, k) => times.push(starts[li] + k * 0.07));
+      const st = starts[li];
+      ln.querySelectorAll('.word').forEach((w, k) => times.push(Array.isArray(st) ? st[Math.min(k, st.length - 1)] : st + k * 0.07));
     });
     words.forEach((w, k) => {
       const p = E.enter(prog(t, times[k], times[k] + 0.6));

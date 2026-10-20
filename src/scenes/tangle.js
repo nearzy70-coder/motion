@@ -5,19 +5,21 @@ import { E, prog, lerp, rng } from '../lib/ease.js';
 import { spline, lineTo, concat, lengths, slice } from '../lib/path.js';
 import { T, L, W, pick } from '../timeline.js';
 
+// Étiquettes dans l'ordre de la voix : « La surface. Le budget. Le quartier. Le bail. Les visites. »
+// (marquées spoken), entrecoupées d'autres critères pour que la pelote s'emmêle.
 export const TAGS = [
-  { label: 'Budget', u: 0.1, v: 0.08 },
-  { label: 'Charges', u: 0.6, v: 0.42 },
-  { label: 'Quartier', u: 0.3, v: 0.28 },
-  { label: 'Bureau opéré ?', u: 0.04, v: 0.72 },
-  { label: 'Bail 3/6/9', u: 0.56, v: 0.05 },
+  { label: 'Délais', u: 0.1, v: 0.08 },
+  { label: 'Préavis', u: 0.6, v: 0.42 },
+  { label: 'Surface', u: 0.3, v: 0.28, spoken: true },
+  { label: 'Charges', u: 0.04, v: 0.72 },
+  { label: 'Budget', u: 0.56, v: 0.05, spoken: true },
   { label: 'Nombre de postes', u: 0.06, v: 0.46 },
-  { label: 'Délais', u: 0.7, v: 0.68 },
-  { label: 'Surface', u: 0.36, v: 0.6 },
-  { label: 'Préavis', u: 0.72, v: 0.24 },
+  { label: 'Quartier', u: 0.7, v: 0.68, spoken: true },
+  { label: 'Bureau opéré ?', u: 0.36, v: 0.6 },
+  { label: 'Bail 3/6/9', u: 0.72, v: 0.24, spoken: true },
   { label: 'Coworking ?', u: 0.1, v: 0.94 },
-  { label: 'Travaux', u: 0.64, v: 0.9 },
-  { label: 'Visites', u: 0.4, v: 0.8 },
+  { label: 'Visites', u: 0.64, v: 0.9, spoken: true },
+  { label: 'Travaux', u: 0.4, v: 0.8 },
 ];
 
 const REGION = pick({ x0: 110, x1: 980, y0: 640, y1: 1430 }, { x0: 92, x1: 980, y0: 250, y1: 960 });
@@ -101,7 +103,7 @@ export function build(ctx) {
     { t: T.around, s: Ls[hookPts.length - 1 - lineTo(S0, S1, 4).length + 1], e: E.inOutCubic },
     { t: T.strike, s: Ls[off], e: E.outCubic },
     { t: T.tangle, s: at(iWander), e: E.inOutCubic },
-    ...tagIdx.map((ci, k) => ({ t: T.tag0 + k * T.tagStep, s: at(ci), e: E.inOutCubic })),
+    ...tagIdx.map((ci, k) => ({ t: T.tags[k], s: at(ci), e: E.inOutCubic })),
     { t: T.pull - 0.62, s: Ls[Ls.length - 1], e: E.inOutCubic },
   ];
 
@@ -118,7 +120,7 @@ export function build(ctx) {
     e.style.transformOrigin = '28px 31px';
     e.style.fontSize = pick('27px', '23px');
     if (L.id === '11') { e.style.height = '54px'; e.style.paddingLeft = '42px'; }
-    return { e, base: (R() - 0.5) * 26, t: T.tag0 + k * T.tagStep };
+    return { e, base: (R() - 0.5) * 26, t: T.tags[k], spoken: !!g.spoken };
   });
   ctx.shared.tagEls = tagEls;
 
@@ -126,7 +128,8 @@ export function build(ctx) {
   head = el('div', { cls: 'abs', style: { left: L.mx + 'px', top: L.headY + 'px' } }, ctx.layers.text);
   const hs = Math.round(L.headSize * 1.12);
   heads = [mk(head, 'Très vite,', hs), mk(head, 'tout s’emmêle.', hs)];
-  flies = mk(head, 'Et le temps <span style="color:var(--mint)">file.</span>', hs);
+  flies = mk(head, 'Et le temps <span class="fl" style="display:inline-block;color:var(--mint)">file.</span>', hs);
+  flies.fl = flies.inner.querySelector('.fl');
   flies.wrap.style.position = 'absolute';
   flies.wrap.style.top = '0px';
 }
@@ -181,8 +184,9 @@ export function update(t, ctx) {
     show(tg.e, vis || (t >= ctx.shared.tangle.tAnchor && t < T.blind + 1));
     if (!vis) return;
     const [x, y] = tagPose(path, Ls, ctx.shared.tangle.tagS[k]);
-    const a = E.soft(prog(t, tg.t - 0.02, tg.t + 0.32));
-    placeTag(tg, x, y, tg.base + (1 - a) * -24, 0.7 + 0.3 * a, Math.min(1, prog(t, tg.t - 0.02, tg.t + 0.08)));
+    const a = E.soft(prog(t, tg.t - 0.02, tg.t + (tg.spoken ? 0.36 : 0.26)));
+    const s0 = tg.spoken ? 0.5 : 0.75;
+    placeTag(tg, x, y, tg.base + (1 - a) * (tg.spoken ? -34 : -18), s0 + (1 - s0) * a, Math.min(1, prog(t, tg.t - 0.02, tg.t + 0.08)));
   });
 
   // Titres
@@ -190,11 +194,14 @@ export function update(t, ctx) {
   show(head, hOn);
   if (hOn) {
     heads.forEach((ln, i) => {
-      const t0 = T.tangle + i * 0.3;
+      const t0 = i ? T.tangle2 : T.tangle;
       const p = E.enter(prog(t, t0, t0 + 0.7)), q = E.exit(prog(t, T.timeFlies - 0.35 + i * 0.05, T.timeFlies - 0.02 + i * 0.05));
       ln.inner.style.transform = `translate3d(0,${((1 - p) * 135 - q * 135).toFixed(2)}%,0)`;
     });
     const p = E.enter(prog(t, T.timeFlies + 0.05, T.timeFlies + 0.75)), q = E.exit(prog(t, T.pull - 0.05, T.pull + 0.25));
     flies.inner.style.transform = `translate3d(0,${((1 - p) * 135 - q * 135).toFixed(2)}%,0)`;
+    // « file. » n'arrive qu'avec le mot, dans la voix
+    const f = E.enter(prog(t, T.file, T.file + 0.55));
+    flies.fl.style.transform = `translate3d(0,${((1 - f) * 135).toFixed(2)}%,0)`;
   }
 }

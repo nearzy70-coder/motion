@@ -41,15 +41,15 @@ export function build(it) {
 
 export function update(it, tl) {
   it.rows.forEach((r, i) => {
-    const t0 = 0.25 + i * 0.3;
+    const t0 = 0.1 + i * 0.2;
     // Écriture de gauche à droite
-    const w = E.outCubic(prog(tl, t0, t0 + 0.32));
+    const w = E.outCubic(prog(tl, t0, t0 + 0.28));
     r.val.style.clipPath = `inset(-10px ${((1 - w) * 100).toFixed(2)}% -10px -6px)`;
     // Surligneur, juste après l'écriture
-    const h = E.inOutCubic(prog(tl, t0 + 0.22, t0 + 0.5));
+    const h = E.inOutCubic(prog(tl, t0 + 0.18, t0 + 0.42));
     r.hl.style.transform = `scaleX(${h.toFixed(4)})`;
   });
-  const c = prog(tl, 2.3, 2.75);
+  const c = prog(tl, 1.55, 1.95);
   it.check.setAttribute('stroke-dashoffset', (1 - E.inOutCubic(c)).toFixed(4));
-  op(it.ckWrap, prog(tl, 2.2, 2.4));
+  op(it.ckWrap, prog(tl, 1.45, 1.6));
 }

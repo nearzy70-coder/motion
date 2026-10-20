@@ -8,4 +8,3 @@ audio/.cache/
 audio/__pycache__/
 renders/stills/*.jpg
 renders/*.log
-renders/master/desk-to-desk_le-fil-v2_1x1_master.mp4

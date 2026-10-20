@@ -1,7 +1,7 @@
 // 4 à 6. La corde à linge : le fil tendu devient la ligne où chaque étape est accrochée.
 // La caméra la longe ; les feuilles réagissent à ses accélérations (ressort amorti précalculé).
 import { el, svg, show, op } from '../lib/dom.js';
-import { E, prog, lerp } from '../lib/ease.js';
+import { E, prog, lerp, bezier } from '../lib/ease.js';
 import { spline } from '../lib/path.js';
 import { paperTexture } from '../lib/texture.js';
 import { T, L, W, H, pick } from '../timeline.js';
@@ -27,19 +27,22 @@ export const ITEMS = [
   { id: 'contract', mod: contract, t: T.s4, h: 980, head: { num: '4', lines: ['On négocie', 'avec le bailleur.'] } },
   { id: 'keys', mod: keys, t: T.s5, h: 0, head: { num: '5', lines: ['Jusqu’à la', 'remise des clés.'] } },
   { id: 'reneg', mod: services, t: T.reneg, h: 640, head: { lines: ['Déjà installés ?'] } },
-  { id: 'day', mod: services, t: T.day, h: 640, head: { lines: ['Besoin d’une salle', 'pour une journée ?'] } },
+  { id: 'day', mod: services, t: T.day, h: 640, head: { lines: ['Une salle', 'pour une journée ?'] } },
 ];
 const SW = 800; // largeur de référence des feuilles
 
 let back, front, headRoot, heads, paper, sway, worldX;
 const PIN_DY = pick(14, 11);
 
+const PAN = 0.55;
+const panEase = bezier(0.76, 0, 0.2, 1);
+
 export function camX(t) {
-  // Plans fixes devant chaque objet, travellings de 0,72 s qui arrivent sur le temps
+  // Plans fixes devant chaque objet ; panoramiques vifs (0,55 s) qui arrivent avec la phrase de la voix
   let x = worldX[0];
   for (let i = 1; i < ITEMS.length; i++) {
-    const a = ITEMS[i].t - 0.72, b = ITEMS[i].t;
-    if (t >= a) x = lerp(worldX[i - 1], worldX[i], E.inOutCubic(prog(t, a, b)));
+    const a = ITEMS[i].t - PAN, b = ITEMS[i].t;
+    if (t >= a) x = lerp(worldX[i - 1], worldX[i], panEase(prog(t, a, b)));
   }
   // Légère dérive pendant les plans fixes : l'image respire
   return x + 14 * Math.sin((t - T.line) * 0.6);
@@ -64,7 +67,7 @@ function simulateSway() {
     const t = t0 + f / hz;
     const a = acc(t);
     st.forEach((s, i) => {
-      const k = 1.5e-4;
+      const k = 0.95e-4; // panoramiques plus courts : accélérations plus fortes, gain réduit d'autant
       const ddth = -s.w * s.w * s.th - 2 * s.z * s.w * s.v - k * a;
       s.v += ddth / hz;
       s.th += s.v / hz;

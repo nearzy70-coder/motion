@@ -57,19 +57,29 @@ Desk to Desk s’occupe du reste.
 Parlez à un conseiller, sur desk to desk point com.
 ```
 
-## Correspondance avec les images
+## Voix enregistrée et placement dans le film (v3)
 
-| Moment (film actuel) | Voix | À l'écran |
-|----------------------|------|-----------|
-| 0 – 5 s | « Trouver des bureaux… c'est simple. Enfin… sur le papier. » | Le titre, la corde raye « simple », « Sur le papier. » |
-| 5 – 12,5 s | « Très vite, tout s'emmêle… le temps file. » | La pelote d'étiquettes (surface, budget, quartier, bail…) |
-| 12,5 – 20 s | « Desk to Desk tire le fil… jusqu'à la remise des clés. » | La corde est tirée, aplat menthe, mêmes phrases à l'écran |
-| 20 – 27,5 s | « Coworking ? Bureau opéré ? Bail commercial ? On vous aide à choisir. » | Les trois fiches formats |
-| 27,5 – 52,5 s | Les 5 étapes, une phrase chacune | Cahier des charges, carte, maquette 3D, contrat tamponné, clés |
-| 52,5 – 57,5 s | Renégociation, location à la journée | Les deux fiches services |
-| 57,5 – 62,5 s | Les villes | La carte et l'itinéraire |
-| 62,5 – 67,5 s | « Et pour vous, c'est gratuit… » | Aplat menthe « gratuit.* » et sa mention |
-| 67,5 – 75 s | Signature + appel à l'action | « Desk to Desk. », bouton « Parler à un conseiller », URL |
+Fichier reçu du client : `audio/vo/voix-off-elevenlabs.mp3` (ElevenLabs v4, voix « Victoria », mono 44,1 kHz, 62,7 s).
+Le texte enregistré est exactement celui ci-dessus. Les phrases ont été repérées dans l'enregistrement par détection
+des silences et des syllabes (sans service de transcription externe), puis le film a été recalé sur la voix.
+
+La voix n'est **ni accélérée ni retouchée**. Elle est seulement coupée au milieu de certaines pauses, et ces pauses
+sont rallongées ou raccourcies (de -0,1 à +0,55 s) pour laisser respirer l'image : avant le drop, entre les trois
+formats, avant et après le tampon, avant la fin. Le placement exact est dans `src/timeline.js` (`VO`).
+
+| Film | Voix | À l'écran |
+|------|------|-----------|
+| 0,25 – 4,4 s | « Trouver des bureaux… c'est simple. Enfin… sur le papier. » | Le titre ; la corde barre « simple » sur « Enfin… » ; « Sur le papier. » |
+| 4,8 – 14,3 s | « Parce que très vite, tout s'emmêle. La surface. Le budget. Le quartier. Le bail. Les visites. Et pendant ce temps… le temps file. » | « Très vite, tout s'emmêle. » ; les étiquettes se nouent au fil, chaque critère cité arrive avec son mot ; « Et le temps file. », « file. » sur le mot |
+| 14,3 – 15,25 s | (silence) | La corde est tirée ; la musique se tait |
+| 15,4 – 22 s | « Desk to Desk tire le fil. Un conseiller dédié. Un seul interlocuteur. Du brief… jusqu'à la remise des clés. » | Drop : store menthe, texte mot à mot avec la voix |
+| 22,3 – 26,7 s | « Coworking ? Bureau opéré ? Bail commercial ? On vous aide à choisir. » | Les trois fiches, un panoramique par question |
+| 27,1 – 44,4 s | Les 5 étapes, une phrase chacune | Une fiche par étape, la caméra arrive sur la phrase ; « loyer, charges, travaux, durée » soulignés au mot près, tampon « Négocié » juste après « durée » |
+| 44,6 – 49,3 s | « Déjà installés ? On renégocie votre contrat. Une salle pour une journée ? On s'en occupe aussi. » | Les deux fiches services |
+| 49,8 – 54,5 s | « À Paris, Lyon, Lille, Bordeaux… et jusqu'à Bruxelles, Barcelone ou Luxembourg. » | Un fil part de Paris vers chaque ville au moment où elle est nommée ; « et en Europe. » sur « et jusqu'à » |
+| 54,75 – 58,3 s | « Et pour vous, c'est gratuit : c'est le propriétaire qui nous rémunère. » | Store menthe, « gratuit.* » sur le mot, mention complète |
+| 58,75 – 65,7 s | « Vous développez votre entreprise. Desk to Desk s'occupe du reste. Parlez à un conseiller, sur desk to desk point com. » | La phrase ; le point écrit « Desk to Desk / s'occupe du reste » et devient son point final ; bouton ; adresse |
+| 65,7 – 68 s | | Carte de fin tenue, la musique se pose |
 
 ## Vérification des affirmations
 

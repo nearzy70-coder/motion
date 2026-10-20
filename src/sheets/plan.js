@@ -61,7 +61,9 @@ export function off() {
   labels.forEach((l) => show(l.e, false));
 }
 
-export function update(it, tl) {
+export function update(it, tl0) {
+  // Chorégraphie d'origine (5 s) resserrée sur l'étape calée sur la voix (3 s)
+  const tl = 1.395 * tl0 + 0.571;
   const on = tl > 0.8 && tl < 5.4;
   show(canvas, on);
   op(it.planDraw, 1 - prog(tl, 1.05, 1.25));

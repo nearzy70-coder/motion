@@ -1,5 +1,6 @@
-// 7. Couverture : la corde relie les villes où Desk to Desk a une page de recherche dédiée.
-// Positions réelles (latitude / longitude), projection équirectangulaire, graticule de cartographe.
+// 7. Couverture : depuis Paris, un fil part vers chaque ville citée par la voix, au moment où elle est dite.
+// Villes ayant une page de recherche dédiée sur le site ; positions réelles (latitude / longitude),
+// projection équirectangulaire, graticule de cartographe.
 import { el, svg, show, op } from '../lib/dom.js';
 import { E, prog, lerp } from '../lib/ease.js';
 import { spline, lengths, slice } from '../lib/path.js';
@@ -7,19 +8,19 @@ import { T, L, W, H, pick } from '../timeline.js';
 import { blindY } from './free.js';
 
 const CITIES = [
-  ['Bordeaux', 44.838, -0.579, 'r'],
   ['Paris', 48.857, 2.352, 'l'],
-  ['Lille', 50.629, 3.057, 'l'],
-  ['Bruxelles', 50.85, 4.352, 'r'],
-  ['Luxembourg', 49.611, 6.13, 'r'],
   ['Lyon', 45.764, 4.836, 'r'],
+  ['Lille', 50.629, 3.057, 'l'],
+  ['Bordeaux', 44.838, -0.579, 'r'],
+  ['Bruxelles', 50.85, 4.352, 'r'],
   ['Barcelone', 41.385, 2.173, 'r'],
+  ['Luxembourg', 49.611, 6.13, 'r'],
 ];
 const BOX = pick({ x0: 150, x1: 930, y0: 530, y1: 1500 }, { x0: 380, x1: 820, y0: 90, y1: 1010 });
 const CW = pick(10, 8);
-const T0 = T.map + 0.25, T1 = T.free - 0.75;
+const GROW = 0.42; // durée de lancer d'un fil, qui arrive sur la ville quand elle est nommée
 
-let root, gsvg, cityEls, route, Lr, arrive, head, heads, headH;
+let root, gsvg, cityEls, spokes, head, heads, headH;
 
 export function build(ctx) {
   const lat0 = 46.2, lon0 = 2.8, kx = Math.cos((46 * Math.PI) / 180);
@@ -48,27 +49,17 @@ export function build(ctx) {
     t.textContent = `${lat}°N`;
   }
 
-  // Itinéraire : arcs doux d'une ville à l'autre
-  const pts = CITIES.map(([, la, lo]) => P(la, lo));
-  const ctrl = [];
-  pts.forEach((p, i) => {
-    if (i > 0) {
-      const q = pts[i - 1];
-      const mx = (p[0] + q[0]) / 2, my = (p[1] + q[1]) / 2, dx = p[0] - q[0], dy = p[1] - q[1], l = Math.hypot(dx, dy);
-      const bow = (i % 2 ? 1 : -1) * Math.min(60, l * 0.18);
-      ctrl.push([mx - (dy / l) * bow, my + (dx / l) * bow]);
-    }
-    ctrl.push(p);
+  // Un arc doux de Paris vers chaque autre ville
+  const hub = P(CITIES[0][1], CITIES[0][2]);
+  spokes = CITIES.slice(1).map(([name, la, lo], i) => {
+    const p = P(la, lo);
+    const dx = p[0] - hub[0], dy = p[1] - hub[1], l = Math.hypot(dx, dy);
+    const bow = (i % 2 ? 1 : -1) * Math.min(70, l * 0.22);
+    const mid = [(hub[0] + p[0]) / 2 - (dy / l) * bow, (hub[1] + p[1]) / 2 + (dx / l) * bow];
+    const pts = spline([hub, mid, p], 5);
+    return { pts, Ls: lengths(pts), t: T.cities[name] };
   });
-  route = spline(ctrl, 5);
-  Lr = lengths(route);
-  // Instant d'arrivée sur chaque ville (proportionnel à la distance parcourue)
-  const cityS = pts.map((p) => {
-    let best = 0, bd = 1e9;
-    route.forEach((q, k) => { const d = Math.hypot(q[0] - p[0], q[1] - p[1]); if (d < bd) { bd = d; best = k; } });
-    return Lr[best];
-  });
-  arrive = cityS.map((s) => lerp(T0, T1, s / Lr[Lr.length - 1]));
+  const arrive = CITIES.map(([name]) => T.cities[name]);
   ctx.shared.cues = { ...(ctx.shared.cues || {}), cities: arrive.map((t, i) => ({ name: CITIES[i][0], t })) };
 
   cityEls = CITIES.map(([name, la, lo, side], i) => {
@@ -93,25 +84,28 @@ export function update(t, ctx) {
   show(root, on); show(head, on);
   if (!on) return;
   op(gsvg, prog(t, T.map, T.map + 0.4));
-  const h = lerp(0, Lr[Lr.length - 1], E.inOutCubic(prog(t, T0 - 0.05, T1)));
-  // Le store menthe recouvre la carte : on ne dessine la corde qu'au-dessus de lui
+  // Le store menthe recouvre la carte : on ne dessine les fils qu'au-dessus de lui
   const by = t >= T.free ? blindY(t) : H + 100;
-  if (h > 2) {
-    const g = ctx.cord.g;
-    g.save();
-    g.beginPath(); g.rect(0, 0, W, by); g.clip();
-    ctx.cord.draw(slice(route, Lr, 0, h), { width: CW });
-    g.restore();
-  }
+  const g = ctx.cord.g;
+  g.save();
+  g.beginPath(); g.rect(0, 0, W, by); g.clip();
+  spokes.forEach((sp) => {
+    const L1 = sp.Ls[sp.Ls.length - 1];
+    const h = L1 * E.outCubic(prog(t, sp.t - GROW, sp.t));
+    if (h > 2) ctx.cord.draw(slice(sp.pts, sp.Ls, 0, h), { width: CW });
+  });
+  g.restore();
   head.style.clipPath = `inset(0 0 ${Math.max(0, L.headY + headH - by).toFixed(1)}px 0)`;
+  root.style.clipPath = by < H ? `inset(0 0 ${Math.max(0, H - by).toFixed(1)}px 0)` : '';
   cityEls.forEach((c) => {
     const a = E.soft(prog(t, c.t - 0.05, c.t + 0.3));
     c.dot.style.transform = `scale(${Math.max(0.001, a).toFixed(4)})`;
     op(c.lab, prog(t, c.t, c.t + 0.25));
     c.lab.style.transform = `translateY(${((1 - E.enter(prog(t, c.t, c.t + 0.5))) * 12).toFixed(2)}px)`;
   });
+  // « En France » avec Paris, « et en Europe. » avec « et jusqu'à Bruxelles »
   heads.forEach((ln, i) => {
-    const t0 = T.map + 0.05 + i * 0.1;
+    const t0 = i ? T.europe : T.map + 0.05;
     const p = E.enter(prog(t, t0, t0 + 0.7));
     ln.inner.style.transform = `translate3d(0,${((1 - p) * 135).toFixed(2)}%,0)`;
   });

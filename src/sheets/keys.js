@@ -55,11 +55,11 @@ export function update(it, tl, t) {
   const ang = tl < 0.25 ? -14 * (1 - drop) : 16 * Math.exp(-u / 1.3) * Math.sin(u * 2 * Math.PI * 0.85) + 0.6 * Math.sin(t * 1.3);
   it.keysRoot.style.transform = `translate3d(${x.toFixed(2)}px,${y0.toFixed(2)}px,0) rotate(${ang.toFixed(3)}deg) scale(${(L.sheetK * pick(1.35, 1.25)).toFixed(3)})`;
   op(it.keysRoot, prog(tl, -0.15, -0.05));
-  const capOn = tl > 0.4 && tl < 5.0;
+  const capOn = tl > 0.4 && tl < 3.0;
   it.caption.style.display = capOn ? '' : 'none';
   if (capOn) {
     const a = E.enter(prog(tl, 0.5, 1.1));
-    const out = E.exit(prog(tl, 4.25, 4.6));
+    const out = E.exit(prog(tl, 2.45, 2.8));
     it.caption.style.transform = `translate3d(${(x - it.capW / 2).toFixed(2)}px,${(pick(1330, 900) + (1 - a) * 20).toFixed(2)}px,0)`;
     op(it.caption, prog(tl, 0.5, 0.8) * (1 - out));
   }

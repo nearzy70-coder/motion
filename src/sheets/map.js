@@ -75,7 +75,7 @@ export function build(it) {
     const dot = svg('circle', { cx: x, cy: y, r: 6, fill: INK }, g);
     const xx = svg('path', { d: `M${x - 9} ${y - 9} L${x + 9} ${y + 9} M${x + 9} ${y - 9} L${x - 9} ${y + 9}`, stroke: '#c03c3c', 'stroke-opacity': 0, 'stroke-width': 2.5, 'stroke-linecap': 'round' }, g);
     xx.setAttribute('stroke', '#7c7d77');
-    it.offers.push({ dot, xx, t: 0.3 + R() * 1.4 });
+    it.offers.push({ dot, xx, t: 0.15 + R() * 1.35 });
   }
   for (const p of PINS) svg('circle', { cx: p[0], cy: p[1], r: 6, fill: INK }, g);
 
@@ -109,7 +109,7 @@ export function update(it, tl) {
     o.dot.setAttribute('fill-opacity', (1 - 0.65 * c).toFixed(3));
   });
   it.pushpins.forEach((p, i) => {
-    const t0 = 1.85 + i * 0.25;
+    const t0 = 1.75 + i * 0.2;
     const a = E.soft(prog(tl, t0, t0 + 0.3));
     show(p.pg, tl >= t0);
     const lift = (1 - a) * 40;
@@ -117,11 +117,11 @@ export function update(it, tl) {
     p.head.setAttribute('transform', `translate(${p.p[0]} ${p.p[1] - lift}) scale(${sc.toFixed(3)}) translate(${-p.p[0]} ${-p.p[1]})`);
     op(p.pg, prog(tl, t0, t0 + 0.08));
   });
-  const th = E.inOutCubic(prog(tl, 2.55, 3.6));
+  const th = E.inOutCubic(prog(tl, 2.2, 2.9));
   it.thread.setAttribute('d', toD(partial(it.threadP, 0, Math.max(0.001, th))));
   show(it.thread, th > 0);
   it.picks.forEach((r, i) => {
-    const t0 = 2.7 + i * 0.22;
+    const t0 = 2.3 + i * 0.15;
     const a = E.enter(prog(tl, t0, t0 + 0.5));
     r.style.transform = `translateY(${((1 - a) * 16).toFixed(2)}px)`;
     op(r, prog(tl, t0, t0 + 0.2));

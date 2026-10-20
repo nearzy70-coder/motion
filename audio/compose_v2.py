@@ -7,6 +7,7 @@ harpe, marimba, glockenspiel, timbales, percussions et bruitages acoustiques.
 Ré majeur, 96 BPM, 30 mesures (75 s), synchronisé sur audio/cues.json
 (exporté depuis le film par scripts/export-cues.mjs).
 Sortie : renders/audio/le-fil-v2-mix.wav (48 kHz, stéréo, 16 bits).
+Archive de la version 2 : remplacée par compose_v3.py, elle ne correspond plus aux repères actuels du film.
 """
 import glob
 import json
