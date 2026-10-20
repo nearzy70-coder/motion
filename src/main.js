@@ -7,6 +7,7 @@ import * as pelote from './scenes/pelote.js';
 import * as enquete from './scenes/enquete.js';
 import * as trait from './scenes/trait.js';
 import * as ligne from './scenes/ligne.js';
+import * as maquette from './scenes/maquette.js';
 import * as pull from './scenes/pull.js';
 import * as line from './scenes/line.js';
 import * as coverage from './scenes/coverage.js';
@@ -50,8 +51,9 @@ const grain = { update() {} };
 const opening = FILM === 'ligne' ? trait : { pile, pelote, enquete, trait }[OPENING];
 // Film « ligne » : après le drop, un seul trait remplace la corde à linge et la carte (ligne.js)
 const MIDDLE = FILM === 'ligne' ? [ligne] : [line, coverage];
-const BUILD = [end, opening, pull, ...MIDDLE, free];
-const UPDATE = [opening, pull, ...MIDDLE, free, end];
+// Film « maquette » : tout se joue dans une maquette 3D (maquette.js), jusqu'au store de la gratuité
+const BUILD = FILM === 'maquette' ? [end, maquette, free] : [end, opening, pull, ...MIDDLE, free];
+const UPDATE = FILM === 'maquette' ? [maquette, free, end] : [opening, pull, ...MIDDLE, free, end];
 
 async function init() {
   await Promise.all([

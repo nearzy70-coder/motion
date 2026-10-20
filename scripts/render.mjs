@@ -39,8 +39,12 @@ const MEDIUM = [[T.strike - 0.15, T.strike + 0.7], [T.fall, T.thread], [T.stamp 
   [T.map, T.free], [T.vousOut - 0.25, T.dot + 0.35]];
 // Film « ligne » : la caméra longe le trait en continu, toute la partie noire passe en échantillonnage moyen
 if (FILM === 'ligne') MEDIUM.push([T.line, T.free]);
+// Film « maquette » : rendu 3D logiciel (lourd) ; la plongée le long du bon chemin passe en échantillonnage moyen,
+// et les fenêtres « rapide » et « moyen » prennent un peu moins de sous-images
+const HEAVY = FILM === 'maquette';
+if (HEAVY) MEDIUM.push([T.blind + 0.75, T.line], [T.choose - 0.3, T.s1 + 0.3]);
 const inAny = (t, W) => W.some(([a, b]) => t >= a && t <= b);
-const samplesFor = (t) => (S_BASE <= 1 ? 1 : inAny(t, FAST) ? 12 : inAny(t, MEDIUM) ? 6 : S_BASE);
+const samplesFor = (t) => (S_BASE <= 1 ? 1 : inAny(t, FAST) ? (HEAVY ? 8 : 12) : inAny(t, MEDIUM) ? (HEAVY ? 4 : 6) : S_BASE);
 const FPS = spec.FPS;
 const FROM = Number(args.from ?? 0), TO = Number(args.to ?? spec.DURATION);
 const f0 = Math.round(FROM * FPS), f1 = Math.round(TO * FPS);

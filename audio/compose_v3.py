@@ -428,7 +428,35 @@ for tc in (T["line"], T["map"]):
         clap_b.add(snare(0.2 + 0.08 * j), tc - BEAT + j * BEAT / 4, pan=0.0)
     hit(fx_b, CYM_SOFT, tc, 0.4, -0.15)
 LIGNE = CUES.get("FILM") == "ligne"   # film « en un seul trait » : ses propres bruitages (plus de pinces ni de maquette)
-if not LIGNE:
+MAQUETTE = CUES.get("FILM") == "maquette"   # film « maquette » 3D : bruitages de la maquette
+if MAQUETTE:
+    d0, d1 = CUES["dashes"]                     # le tracé droit sur le plan (feutre)
+    foley_b.add(marker(d1 - d0, 0.05), d0, pan=-0.1)
+    pl_b.add(pluck(79, 0.35, 0.7), 1.0, pan=0.25)          # le cercle au pied de la tour
+    for k_ in range(7):                         # la tour s'allume étage par étage : une note par étage
+        pl_b.add(pluck((74, 77, 79, 81, 84, 86, 89)[k_], 0.34, 0.6), CUES["lights"][0] + k_ * 0.1, pan=-0.3 + 0.1 * k_)
+    for k_, tf_ in enumerate(CUES["floors"]):   # les étages s'envolent ou se reposent
+        hit(foley_b, GUIRO, tf_, 0.16, (-0.2, 0.1, 0.25)[k_], semis=(-5, 3, 5)[k_], dur=0.45, rel=0.1)
+        if k_:
+            foley_b.add(thud(0.32), tf_ + 0.43, 0.2, pan=0.05)
+    hit(foley_b, GUIRO, CUES["explode"], 0.14, 0.0, semis=-2, dur=0.6, rel=0.12)
+    for tk in CUES["ticks"]:                    # les cases se cochent
+        hit(foley_b, CLAVES, tk, 0.3, 0.2, semis=7, dur=0.1, rel=0.04)
+    for ts_ in CUES["sinks"]:                   # les offres s'enfoncent dans le socle
+        hit(foley_b, CLACK, ts_ + 0.3, 0.12, rng.uniform(-0.4, 0.4), semis=rng.uniform(-6, -1), dur=0.08, rel=0.03)
+    for k_, m in enumerate([81, 84, 88]):       # trois seulement remontent : trois notes qui montent
+        pl_b.add(pluck(m, 0.4, 0.8), CUES["chosen"] + k_ * 0.12, pan=(-0.2, 0.0, 0.2)[k_])
+    w0, w1 = CUES["walk"]                       # les pas de la visite
+    tt = w0
+    while tt < w1:
+        hit(foley_b, CLACK, tt, 0.09, rng.uniform(-0.15, 0.15), semis=-8, dur=0.06, rel=0.03)
+        tt += 0.25
+    p0, p1 = CUES["sign"]                       # la signature
+    foley_b.add(marker(p1 - p0, 0.06), p0, pan=0.2)
+    hit(foley_b, GUIRO, CUES["door"], 0.14, 0.2, semis=-12, dur=0.5, rel=0.1)   # la porte s'ouvre
+    hit(foley_b, GUIRO, CUES["renegSpin"], 0.16, -0.1, semis=2, dur=1.0, rel=0.15)  # la flèche fait le tour du contrat
+    pl_b.add(pluck(86, 0.38, 0.8), CUES["dayRing"], pan=0.15)   # la journée entourée
+elif not LIGNE:
     # Pinces à linge : un clac de bois à chaque arrivée de caméra
     for key in ("line", "fmt2", "fmt3", "s1", "s2", "s3", "s4", "s5", "reneg", "day"):
         hit(foley_b, CLACK, T[key] - 0.02, 0.5, 0.25)

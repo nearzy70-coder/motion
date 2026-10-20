@@ -1,4 +1,4 @@
-# Desk to Desk — « Le Fil » v6
+# Desk to Desk — « Le Fil » v7
 
 Film publicitaire en motion design pour [Desk to Desk](https://www.desk-to-desk.com/), courtier en bureaux.
 **68 s, en français, avec la voix off ElevenLabs fournie par le client.** Livrable : **format carré 1:1** (1080 × 1080). Le code garde aussi une mise en page 9:16 (`--f 916`), non rendue.
@@ -17,6 +17,29 @@ Film publicitaire en motion design pour [Desk to Desk](https://www.desk-to-desk.
 | `renders/audio/le-fil-v3-voix.wav` | Voix seule, placée et traitée comme dans le film |
 | `renders/final/v1/` | Version 1 (33 s), conservée pour comparaison |
 | `research/` | Faits vérifiés et sources, storyboards v2 et v3, texte et placement de la voix off |
+
+## v7 : « La maquette » (version complète tout en 3D)
+
+**`renders/final/desk-to-desk_le-fil-v7-maquette_1x1_1080x1080.mp4`** (1:1, 68 s, même voix off, nouvelle bande-son de bruitages).
+Tout le film se joue dans une maquette d'architecte en 3D (Three.js) :
+- volumes blancs mats sur fond noir ;
+- lumière de studio : environnement, soleil et ombres douces ;
+- occlusion ambiante ;
+- flou de bascule façon miniature ;
+- accents menthe.
+
+| Temps | À l'image |
+|-------|-----------|
+| 0 – 4,8 s | La ville vue en plan : un pointillé droit relie « vous » à la tour visée (« c'est simple »). Sur « sur le papier », la maquette bascule en perspective |
+| 4,8 – 12,3 s | Un repère menthe erre dans les rues, sa trace s'emmêle ; chaque critère s'affiche sur un immeuble, ceux dits par la voix en grand |
+| 12,3 – 15,25 s | Vue aérienne, le soleil fait le tour de la ville (« le temps file ») ; « Délais » apparaît en dernier |
+| 15,25 – 22,25 s | Drop : le bon chemin s'allume en ruban menthe. La caméra le suit jusqu'au parvis de la tour, dont les étages s'allument de bas en haut, puis entre dans la façade |
+| 22,25 – 26,75 s | L'immeuble en éclaté : le toit et les étages s'envolent pour montrer chaque format (coworking, bureaux opérés, plateau en bail 3/6/9), puis les trois étages séparés |
+| 26,75 – 49,75 s | Une vitrine sur socle par étape, la caméra passe de l'une à l'autre : cahier des charges coché ; 25 offres dont 3 seulement remontent ; parcours de visite ; contrat surligné au mot près puis tamponné ; signature, clé qui tourne, porte qui s'ouvre ; contrat renégocié ; salle réservée pour une journée |
+| 49,75 – 54,75 s | La France en relief au milieu de ses voisins : une colonne menthe par ville nommée, des arcs depuis Paris |
+| 54,75 s – fin | Store menthe « gratuit.* » avec la mention complète, puis la signature (identiques à la v6) |
+
+Rendu : `node scripts/export-cues.mjs 11 '' maquette`, `cd audio && python3 compose_v3.py maquette`, puis `node scripts/render.mjs --f 11 --v maquette --name desk-to-desk_le-fil-v7-maquette`.
 
 ## v6 : « Le Fil, en un seul trait » (autre version complète)
 

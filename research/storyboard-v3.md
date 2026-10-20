@@ -134,3 +134,33 @@ réagissent à ce qui est dit. Rendu : `node scripts/render.mjs --f 11 --o trait
 
 Les dessins du chemin sont factuels et génériques : pas de chiffres, pas d'adresses, pas de logos tiers. Le
 contour de la France est stylisé. Les villes sont celles qui ont une page sur le site (F13).
+
+## v7 : « La maquette » (tout le film en 3D)
+
+Retour client sur la v6 : « j'aime pas trop », dessins pas assez beaux. Demande : une version tout en 3D.
+Parti pris : **une maquette d'architecte**. Volumes blancs mats, sol noir, lumière de studio, ombres douces,
+occlusion ambiante, léger flou de bascule (effet miniature), accents menthe. Les titres gardent la typographie
+du film. Rendu : `node scripts/render.mjs --f 11 --v maquette`.
+
+| Temps | Voix | Image |
+|-------|------|-------|
+| 0 – 2,7 s | « Trouver des bureaux… c'est simple. » | La ville en plan, vue de haut. Un pointillé menthe droit relie le repère « vous » à la tour visée, entourée d'un cercle |
+| 2,7 – 4,8 s | « Enfin… sur le papier. » | La maquette bascule en perspective : le tracé droit passe au-dessus des immeubles |
+| 4,8 – 12,3 s | « Parce que très vite, tout s'emmêle… les visites. » | Caméra drone derrière le repère, qui tourne en rond dans les rues ; sa trace s'emmêle. Les critères s'affichent sur les immeubles voisins, les cinq dits par la voix au mot près et en grand |
+| 12,3 – 15,25 s | « Et pendant ce temps… le temps file. » | Vue aérienne de la trace emmêlée ; le soleil fait un tour complet, les ombres tournent ; « Délais » en dernier ; la lumière baisse |
+| 15,25 s | (drop) | Le bon chemin s'allume en ruban menthe, de « vous » au pied de la tour |
+| 16,3 – 22,25 s | « Desk to Desk tire le fil… remise des clés. » | La caméra plonge et suit le ruban dans les rues. La tour s'allume étage par étage, puis la caméra entre dans la façade |
+| 22,25 – 25,6 s | « Coworking ? Bureau opéré ? Bail commercial ? » | L'immeuble en éclaté : le toit et les étages du dessus s'envolent. Un étage par format, avec sa légende : tables partagées ; bureaux fermés vitrés ; plateau nu à aménager, « 3 / 6 / 9 » au sol |
+| 25,6 – 26,75 s | « On vous aide à choisir. » | Les trois étages se séparent, vus ensemble |
+| 27,1 – 29,7 s | Étape 1 | Vitrine : client et conseiller à une table ronde ; le cahier des charges se coche |
+| 30 – 33,3 s | Étape 2 | 25 offres en miniature : elles s'enfoncent dans le socle, trois remontent en menthe |
+| 33,6 – 36 s | Étape 3 | Un plateau vu en plan : le parcours de visite se trace, deux personnages le suivent |
+| 36,6 – 40,4 s | Étape 4 | Le contrat sur la table : loyer, charges, travaux, durée surlignés au mot près ; coup de tampon « Négocié » |
+| 41,3 – 44,1 s | Étape 5 | Signature, puis la clé qui tourne et la porte qui s'ouvre sur la lumière menthe |
+| 44,6 – 49,3 s | Services | Un contrat entouré d'une flèche qui en fait le tour ; une salle de réunion, « 1 journée » au mur |
+| 49,75 – 54,75 s | Villes | La France en relief au milieu de ses voisins ; une colonne menthe par ville nommée, un arc depuis Paris |
+| 54,75 s – fin | Gratuité, signature | Identiques à la v6 |
+
+Bruitages propres à la maquette : feutre du tracé ; une note par étage qui s'allume ; glissement des étages ;
+offres qui s'enfoncent ; trois notes pour les trois retenues ; pas de la visite ; signature ; porte ; flèche.
+Contenu sans chiffres ni adresses : les maquettes sont génériques et les villes sont celles du site.
