@@ -58,3 +58,29 @@ Retour sur la v3 : le début (la corde qui passe sous « simple », le barre pui
 
 Pourquoi : dans la v3, le fil était à la fois le désordre et la solution. Ici, le désordre est fait des mots du
 problème, que l'on lit en grand, et le fil n'apparaît que pour remettre de l'ordre.
+
+## v5 : deux autres ouvertures, au choix (retour client : « fais les deux »)
+
+Le film est identique à partir du drop (15,25 s). Chaque ouverture se choisit au rendu : `--o pelote` ou `--o enquete`.
+La v4 (pile de mots) reste l'ouverture par défaut.
+
+### A. La pelote (`src/scenes/pelote.js`, Three.js)
+
+| Temps | Image | Son |
+|-------|-------|-----|
+| 0 – 2,6 s | « Trouver des bureaux, c'est simple. » ; un fil menthe en 3D (deux brins torsadés) traverse l'image, parfaitement droit | Piano électrique |
+| 2,75 s | « Enfin… » : le fil vibre comme une corde pincée, « simple. » tremble avec lui | Corde grave pincée, arrêt de la musique |
+| 4,8 – 11,6 s | Le fil s'enroule en une vraie pelote qui grossit. Elle est roulée à la main : bandes de tours qui changent de direction. Elle avale le fil par les deux bouts | Frottement continu (shaker), groove |
+| 5,9 – 13,6 s | Les critères sont des étiquettes accrochées à la pelote. Chacune arrive face caméra quand la voix la dit, puis tourne avec la pelote et passe derrière | Une note de pluck par étiquette |
+| 14,25 s | Le bout du fil ressort et part vers la droite | Silence |
+| 14,65 – 15,2 s | La pelote se dévide d'un coup en tournant sur elle-même ; les étiquettes sont projetées ; il ne reste qu'un fil droit | Crécelle qui s'emballe, puis drop |
+
+### B. Le tableau d'enquête (`src/scenes/enquete.js`)
+
+| Temps | Image | Son |
+|-------|-------|-----|
+| 0 – 2,6 s | Gros plan sur une fiche bristol punaisée : « Trouver des bureaux, c'est simple. » | Piano électrique |
+| 2,6 – 3,3 s | « Enfin… » : la caméra recule d'un coup ; ce n'est qu'un papier sur un grand tableau noir. « Sur le papier. » | Arrêt de la musique |
+| 4,8 – 13,6 s | Les fiches sont punaisées une à une avec la voix : grandes fiches pour les critères dits, post-it pour les autres. Un fil menthe va de punaise en punaise, d'autres fils relient les fiches ; la caméra suit chaque nouvelle fiche | Coup sec de chaque punaise, note de pluck |
+| 14,25 s | Le bout du fil est attrapé et tiré vers la droite | Silence |
+| 14,65 – 15,2 s | Les punaises sautent l'une après l'autre depuis le bout tiré, les fiches tombent, le tableau se vide : il ne reste qu'un fil droit | Rafale de petits coups (punaises), puis drop |

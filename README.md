@@ -18,6 +18,15 @@ Film publicitaire en motion design pour [Desk to Desk](https://www.desk-to-desk.
 | `renders/final/v1/` | Version 1 (33 s), conservée pour comparaison |
 | `research/` | Faits vérifiés et sources, storyboards v2 et v3, texte et placement de la voix off |
 
+## v5 : deux autres ouvertures, au choix
+
+| Fichier | Ouverture (0 à 15 s) |
+|---------|----------------------|
+| `renders/final/desk-to-desk_le-fil-v5-pelote_1x1_1080x1080.mp4` | **La pelote** : le fil droit s'enroule en une vraie pelote 3D avec ses étiquettes, puis se dévide d'un coup avant le drop |
+| `renders/final/desk-to-desk_le-fil-v5-enquete_1x1_1080x1080.mp4` | **Le tableau d'enquête** : la fiche « c'est simple » n'est qu'un papier sur un tableau ; les critères sont punaisés et reliés par des fils ; au tirage, les punaises sautent et le tableau se vide |
+
+Le reste du film est identique. Rendu d'une variante : `node scripts/export-cues.mjs 11 pelote`, `cd audio && python3 compose_v3.py pelote`, puis `node scripts/render.mjs --f 11 --o pelote --name desk-to-desk_le-fil-v5-pelote`. Même chose avec `enquete`. Détails dans `research/storyboard-v3.md`.
+
 ## v4 : nouvelle ouverture
 
 La phrase d'accroche s'effondre et les critères tombent un à un, avec la voix, en une pile de mots (physique de corps rigides). Une aiguille coud la pile, et le fil tiré aligne les mots avant le drop. Détails dans `research/storyboard-v3.md`.
@@ -81,7 +90,7 @@ src/
   lib/cord.js        rendu de la cordelette : ombres, torsion, reflet, croisements
   lib/texture.js     papier, encre de tampon (grain disponible mais désactivé)
   popup3d.js         maquette « pop-up » Three.js (trait d'architecte)
-  scenes/            pile (accroche, pile de mots, aiguille), pull, line (corde à linge + caméra), coverage, free, end
+  scenes/            ouvertures : pile (v4), pelote (3D), enquete ; puis pull, line (corde à linge + caméra), coverage, free, end
   sheets/            formats, brief, map, plan, contract, keys, services
 audio/compose_v3.py  musique (synthèse + échantillons CC0), placement de la voix, ducking, mixage
 audio/dsp.py         filtres, réverbération, compression, banques d'échantillons
