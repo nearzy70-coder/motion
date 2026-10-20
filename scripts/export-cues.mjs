@@ -7,7 +7,7 @@ import { startServer, openStage, CHROME_ARGS, ROOT } from './server.mjs';
 const { server, port } = await startServer();
 const b = await chromium.launch({ args: CHROME_ARGS });
 try {
-  const { page } = await openStage(b, port, '916');
+  const { page } = await openStage(b, port, process.argv[2] || '11');
   const cues = await page.evaluate(() => window.__cues);
   const out = path.join(ROOT, 'audio', 'cues.json');
   fs.writeFileSync(out, JSON.stringify(cues, null, 2));

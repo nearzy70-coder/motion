@@ -15,7 +15,7 @@ const CITIES = [
   ['Lyon', 45.764, 4.836, 'r'],
   ['Barcelone', 41.385, 2.173, 'r'],
 ];
-const BOX = pick({ x0: 150, x1: 930, y0: 530, y1: 1500 }, { x0: 470, x1: 1000, y0: 90, y1: 1010 });
+const BOX = pick({ x0: 150, x1: 930, y0: 530, y1: 1500 }, { x0: 380, x1: 820, y0: 90, y1: 1010 });
 const CW = pick(10, 8);
 const T0 = T.map + 0.25, T1 = T.free - 0.75;
 
@@ -31,14 +31,18 @@ export function build(ctx) {
   root = el('div', { cls: 'layer' }, ctx.layers.worldBack);
   gsvg = svg('svg', { width: W, height: H, viewBox: `0 0 ${W} ${H}`, style: 'position:absolute;left:0;top:0' }, root);
   // Graticule tous les 2°
+  // En carré, la grille commence sous le titre et les longitudes sont graduées en bas
+  const topY = pick(-1e9, 250);
   for (let lon = -4; lon <= 10; lon += 2) {
     const a = P(latMin - 1, lon), b = P(latMax + 1, lon);
-    svg('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: 'rgba(255,255,255,0.09)', 'stroke-width': 1 }, gsvg);
-    const t = svg('text', { x: b[0] + 6, y: P(latMax, lon)[1] - 8, 'font-family': 'Noto Sans', 'font-size': pick(16, 14), fill: 'rgba(255,255,255,0.32)' }, gsvg);
+    svg('line', { x1: a[0], y1: a[1], x2: b[0], y2: Math.max(b[1], topY), stroke: 'rgba(255,255,255,0.09)', 'stroke-width': 1 }, gsvg);
+    const ly = pick(P(latMax, lon)[1] - 8, P(latMin, lon)[1] + 26);
+    const t = svg('text', { x: b[0] + 6, y: ly, 'font-family': 'Noto Sans', 'font-size': pick(16, 14), fill: 'rgba(255,255,255,0.32)' }, gsvg);
     t.textContent = `${Math.abs(lon)}°${lon < 0 ? 'O' : 'E'}`;
   }
   for (let lat = 40; lat <= 52; lat += 2) {
     const a = P(lat, -6), b = P(lat, 12);
+    if (a[1] < topY) continue;
     svg('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: 'rgba(255,255,255,0.09)', 'stroke-width': 1 }, gsvg);
     const t = svg('text', { x: Math.max(BOX.x0 - 40, 20), y: a[1] - 6, 'font-family': 'Noto Sans', 'font-size': pick(16, 14), fill: 'rgba(255,255,255,0.32)' }, gsvg);
     t.textContent = `${lat}°N`;

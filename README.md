@@ -1,7 +1,7 @@
 # Desk to Desk — « Le Fil » v2
 
 Film publicitaire en motion design pour [Desk to Desk](https://www.desk-to-desk.com/), courtier en bureaux.
-Version longue : **75 s**, en français, compréhensible sans le son. Format principal **9:16** et format carré **1:1** avec une mise en page dédiée.
+Version longue : **75 s**, en français, compréhensible sans le son. **Livrable : format carré 1:1** (1080 × 1080), à la demande du client. Le code garde aussi une mise en page 9:16 (`--f 916`), non rendue.
 
 > **Concept :** chercher des bureaux, c'est une pelote emmêlée. Desk to Desk tire le fil : la recherche devient une ligne droite, la corde à linge sur laquelle chaque étape est accrochée, du cahier des charges aux clés.
 
@@ -9,10 +9,9 @@ Version longue : **75 s**, en français, compréhensible sans le son. Format pri
 
 | Fichier | Contenu |
 |---------|---------|
-| `renders/final/desk-to-desk_le-fil-v2_9x16_1080x1920.mp4` | **Version principale** : 1080 × 1920, 30 i/s, H.264 High, BT.709, AAC 192 kb/s 48 kHz, −14 LUFS |
-| `renders/final/desk-to-desk_le-fil-v2_1x1_1080x1080.mp4` | Format carré (mise en page propre, pas un recadrage) |
+| `renders/final/desk-to-desk_le-fil-v2_1x1_1080x1080.mp4` | **Film final** : 1080 × 1080, 30 i/s, H.264 High, BT.709, AAC 192 kb/s 48 kHz, −14 LUFS |
 | `renders/audio/le-fil-v2-mix.wav` | Bande-son originale avant normalisation (48 kHz, 16 bits) |
-| `renders/final/planche-contact-v2_*.jpg` | Planches contact extraites des MP4 |
+| `renders/final/planche-contact-v2_1x1.jpg` | Planche contact extraite du MP4 (une image par seconde) |
 | `renders/final/v1/` | Version 1 (33 s), conservée pour comparaison |
 | `research/` | Faits vérifiés et sources, storyboard v2, direction artistique, notes |
 
@@ -36,10 +35,9 @@ Prérequis : Node 18+, Python 3 avec numpy et Pillow, FFmpeg (libx264, AAC), Chr
 npm install
 # Échantillons CC0 (extraction partielle, environ 650 Mo) dans /home/user/sgossner/vsco-2-ce
 # ou dans le dossier indiqué par la variable VSCO_DIR
-node scripts/export-cues.mjs        # repères temporels du film -> audio/cues.json
+node scripts/export-cues.mjs 11     # repères temporels du film (format 1:1) -> audio/cues.json
 python3 audio/compose.py            # bande-son -> renders/audio/le-fil-v2-mix.wav
-node scripts/render.mjs --f 916     # rendu 9:16 (environ 30 min, 4 workers)
-node scripts/render.mjs --f 11      # rendu 1:1
+node scripts/render.mjs --f 11      # rendu 1:1 (environ 25 min, 4 workers)
 npm run preview                     # lecteur web : /src/index.html?play (&f=11 pour le carré)
 node scripts/stills.mjs --f 916 8 18.5 40   # images de contrôle + planche contact
 ```
