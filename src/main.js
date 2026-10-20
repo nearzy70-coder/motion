@@ -1,35 +1,38 @@
-// Orchestrateur : construit les calques, expose seek(t) (rendu déterministe) et un lecteur web (?play).
-import { W, H, DURATION, FPS } from './timeline.js';
-import * as background from './scenes/background.js';
+// Orchestrateur v2 : calques, seek(t) déterministe, lecteur web (?play), formats (?f=916 | ?f=11).
+import { L, W, H, DURATION, FPS, T, BPM } from './timeline.js';
+import { makeCordLayer } from './lib/cord.js';
+import { makeGrain } from './lib/texture.js';
 import * as hook from './scenes/hook.js';
-import * as problem from './scenes/problem.js';
-import * as transform from './scenes/transform.js';
-import * as hud from './scenes/hud.js';
-import * as header from './scenes/header.js';
-import * as brief from './scenes/brief.js';
-import * as selection from './scenes/selection.js';
-import * as visit from './scenes/visit.js';
-import * as nego from './scenes/nego.js';
-import * as value from './scenes/value.js';
+import * as tangle from './scenes/tangle.js';
+import * as pull from './scenes/pull.js';
+import * as line from './scenes/line.js';
+import * as coverage from './scenes/coverage.js';
+import * as free from './scenes/free.js';
 import * as end from './scenes/end.js';
-import * as thread from './scenes/thread.js';
 
 const params = new URLSearchParams(location.search);
 const stage = document.getElementById('stage');
+stage.style.width = W + 'px';
+stage.style.height = H + 'px';
+stage.dataset.format = L.id;
+document.body.style.width = W + 'px';
+document.body.style.height = H + 'px';
 
 // Calques, du fond vers l'avant
-const LAYERS = ['bg', 'gl', 'scene', 'plan', 'strokes', 'thread', 'chips', 'hud', 'top'];
+const LAYERS = ['bg', 'mint', 'worldBack', 'gl', 'cord', 'worldFront', 'tags', 'text', 'grain'];
 const layers = {};
 for (const n of LAYERS) {
-  const d = document.createElement('div');
+  const d = document.createElement(n === 'cord' || n === 'grain' ? 'canvas' : 'div');
   d.className = 'layer';
   d.dataset.layer = n;
+  if (d.tagName === 'CANVAS') { d.width = W; d.height = H; }
   stage.appendChild(d);
   layers[n] = d;
 }
 
 const ctx = {
-  stage, layers, shared: {},
+  stage, layers, L, W, H, shared: {},
+  cord: makeCordLayer(layers.cord, W, H),
   measure(e) {
     const s = stage.getBoundingClientRect();
     const k = s.width / W;
@@ -37,36 +40,40 @@ const ctx = {
     return { x: (r.left - s.left) / k, y: (r.top - s.top) / k, w: r.width / k, h: r.height / k };
   },
 };
+// Le grain est ajouté à l'encodage (FFmpeg) ; dans le navigateur, seulement pour le lecteur temps réel
+const grain = params.has('play') ? makeGrain(layers.grain, W, H, 0.075) : { update() {} };
 
-// Ordre de construction : les scènes mesurées avant le fil qui s'y accroche
-const BUILD = [background, hook, problem, transform, hud, header, brief, visit, selection, nego, value, end, thread];
-const UPDATE = BUILD;
+// end est construit avant hook : le fil de l'accroche et la fin partagent des mesures
+const BUILD = [end, hook, tangle, pull, line, coverage, free];
+const UPDATE = [hook, tangle, pull, line, coverage, free, end];
 
 async function init() {
   await Promise.all([
-    document.fonts.load('600 100px Parkinsans'),
-    document.fonts.load('500 100px Parkinsans'),
-    document.fonts.load('400 30px "Noto Sans"'),
-    document.fonts.load('600 30px "Noto Sans"'),
-    document.fonts.load('700 30px "Noto Sans"'),
+    document.fonts.load('600 100px Parkinsans'), document.fonts.load('300 100px Parkinsans'),
+    document.fonts.load('500 100px Parkinsans'), document.fonts.load('400 30px "Noto Sans"'),
+    document.fonts.load('600 30px "Noto Sans"'), document.fonts.load('700 30px "Noto Sans"'),
   ]);
   await document.fonts.ready;
   for (const m of BUILD) await m.build(ctx);
+  window.__cues = { T, BPM, DURATION, ...(ctx.shared.cues || {}) };
   seek(Number(params.get('t') || 0));
 }
 
 function seek(t) {
+  ctx.cord.clear();
   for (const m of UPDATE) m.update(t, ctx);
+  grain.update(t);
 }
 
 window.seek = seek;
 window.__ctx = ctx;
-window.__spec = { W, H, DURATION, FPS };
-window.__ready = init().then(() => true).catch((e) => { console.error(e); window.__error = String(e && e.stack || e); return false; });
+window.__spec = { W, H, DURATION, FPS, format: L.id };
+window.__ready = init().then(() => true).catch((e) => { console.error(e); window.__error = String((e && e.stack) || e); return false; });
 
-// Lecteur web temps réel : /src/index.html?play
+// Lecteur web temps réel
 if (params.has('play')) {
   document.body.className = 'player';
+  document.body.style.width = document.body.style.height = '';
   const frame = document.createElement('div');
   frame.id = 'frame';
   stage.parentNode.insertBefore(frame, stage);
@@ -79,12 +86,11 @@ if (params.has('play')) {
   };
   fit();
   addEventListener('resize', fit);
-
   const controls = document.createElement('div');
   controls.id = 'controls';
   controls.innerHTML = '<button id="pp">Lecture</button><input id="scrub" type="range" min="0" max="' + DURATION + '" step="0.001" value="0"><span id="tc">0.00 s</span>';
   document.body.appendChild(controls);
-  const audio = new Audio('../renders/audio/le-fil-mix.wav');
+  const audio = new Audio('../renders/audio/le-fil-v2-mix.wav');
   const pp = controls.querySelector('#pp'), scrub = controls.querySelector('#scrub'), tc = controls.querySelector('#tc');
   let playing = false, t0 = 0, base = 0;
   const now = () => (playing ? base + (performance.now() - t0) / 1000 : base);

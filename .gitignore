@@ -4,3 +4,6 @@ renders/stills/*.png
 renders/stills/_list.txt
 renders/render.log
 __pycache__/
+audio/.cache/
+audio/__pycache__/
+renders/stills/*.jpg
