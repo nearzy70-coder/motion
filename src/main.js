@@ -5,6 +5,7 @@ import { E, prog, lerp } from './lib/ease.js';
 import * as pile from './scenes/pile.js';
 import * as pelote from './scenes/pelote.js';
 import * as enquete from './scenes/enquete.js';
+import * as trait from './scenes/trait.js';
 import * as pull from './scenes/pull.js';
 import * as line from './scenes/line.js';
 import * as coverage from './scenes/coverage.js';
@@ -45,7 +46,7 @@ const ctx = {
 const grain = { update() {} };
 
 // L'ouverture est construite avant pull : dans la version « pile », le fil tiré au drop est celui qui a cousu la pile
-const opening = { pile, pelote, enquete }[OPENING];
+const opening = { pile, pelote, enquete, trait }[OPENING];
 const BUILD = [end, opening, pull, line, coverage, free];
 const UPDATE = [opening, pull, line, coverage, free, end];
 

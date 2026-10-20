@@ -86,8 +86,8 @@ export const FORMATS = {
 
 const params = new URLSearchParams(typeof location !== 'undefined' ? location.search : '');
 export const L = FORMATS[params.get('f') || '916'] || FORMATS['916'];
-// Ouverture (0 à 15,25 s) : pile de mots (v4), pelote de fil en 3D, ou tableau d'enquête
-export const OPENING = ['pile', 'pelote', 'enquete'].includes(params.get('o')) ? params.get('o') : 'pile';
+// Ouverture (0 à 15,25 s) : pile de mots (v4), pelote de fil en 3D, tableau d'enquête, ou trait continu (v5 finale)
+export const OPENING = ['pile', 'pelote', 'enquete', 'trait'].includes(params.get('o')) ? params.get('o') : 'pile';
 export const W = L.W;
 export const H = L.H;
 export const is916 = L.id === '916';

@@ -338,6 +338,8 @@ for i, name in enumerate(PROBLEM):
             hit(perc_b, SHAKER, t0 + (b + 0.5) * BEAT, 0.25, -0.35)
 # Les étiquettes : une note par critère, de plus en plus aiguë ; les mots dits par la voix plus marqués
 TAG_NOTES = [62, 65, 67, 69, 72, 74, 77, 79, 81, 84, 86, 89, 64]
+if len(CUES["drops"]) == 5:                     # seuls les cinq critères dits : leurs notes de la gamme d'origine
+    TAG_NOTES = [67, 72, 77, 81, 86]
 for k, d in enumerate(CUES["drops"]):
     t, spoken = d["t"], d["spoken"]
     pl_b.add(pluck(TAG_NOTES[k], 0.5 if spoken else 0.3, 0.55), t, pan=(-0.35, 0.35)[k % 2])
@@ -353,7 +355,19 @@ if "wind" in CUES:                              # la pelote s'enroule : un frott
     while tt < w1:
         hit(foley_b, SHAKER, tt, 0.9 * (1 - 0.6 * (tt - w0) / (w1 - w0)), rng.uniform(-0.2, 0.2))
         tt += BEAT / 4
-if "unravel" in CUES:                           # elle se dévide d'un coup : une crécelle qui s'emballe
+for pw in CUES.get("pen", []):                  # le trait : un feutre sur papier, plus nerveux quand il s'emballe
+    d_ = pw["t1"] - pw["t0"]
+    foley_b.add(marker(d_, 0.08 if pw["rush"] else 0.05), pw["t0"], pan=rng.uniform(-0.25, 0.25))
+if "reveal" in CUES:                            # le recul révèle l'écheveau : un impact sourd et une cymbale douce
+    fx_b.add(sub_boom(0.55, 46.2, 1.2), CUES["reveal"])
+    hit(fx_b, CYM_SOFT, CUES["reveal"], 0.35, 0.1)
+if "spin" in CUES:                              # l'aiguille de l'horloge file
+    hit(foley_b, GUIRO, CUES["spin"][0], 0.2, 0.15, semis=5, dur=CUES["spin"][1] - CUES["spin"][0], rel=0.08)
+if VARIANT == "trait" and "unravel" in CUES:    # tout le dessin se tend d'un coup : un zip qui monte
+    u0, u1 = CUES["unravel"]
+    hit(foley_b, GUIRO, u0, 0.3, -0.1, semis=-2, dur=(u1 - u0) * 0.55, rel=0.05)
+    hit(foley_b, GUIRO, u0 + (u1 - u0) * 0.5, 0.3, 0.1, semis=4, dur=(u1 - u0) * 0.5, rel=0.05)
+elif "unravel" in CUES:                         # la pelote se dévide d'un coup : une crécelle qui s'emballe
     u0, u1 = CUES["unravel"]
     for k_ in range(3):
         hit(foley_b, RATCHET, u0 + k_ * (u1 - u0) / 3, 0.5, (-0.3, 0.0, 0.3)[k_], semis=2 * k_, dur=(u1 - u0) / 3 + 0.05, rel=0.06)
