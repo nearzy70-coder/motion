@@ -1,0 +1,144 @@
+/* Desk to Desk — « Le Fil » : système visuel */
+
+@font-face {
+  font-family: 'Parkinsans';
+  src: url('../public/assets/fonts/parkinsans-latin-wght-normal.woff2') format('woff2');
+  font-weight: 300 800;
+  font-display: block;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Parkinsans';
+  src: url('../public/assets/fonts/parkinsans-latin-ext-wght-normal.woff2') format('woff2');
+  font-weight: 300 800;
+  font-display: block;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('../public/assets/fonts/noto-sans-latin-wght-normal.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: block;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('../public/assets/fonts/noto-sans-latin-ext-wght-normal.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: block;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+  --ink: #111111;
+  --ink2: #181c1a;
+  --ink3: #202624;
+  --mint: #2acaa5;
+  --mint2: #34e0b8;
+  --map: #449280;
+  --white: #ffffff;
+  --muted: rgba(255, 255, 255, 0.62);
+  --hair: rgba(255, 255, 255, 0.1);
+  --paper-line: #e8ecea;
+  --paper-muted: #6b7471;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #000; }
+body.render { width: 1080px; height: 1920px; overflow: hidden; }
+
+#stage {
+  position: relative;
+  width: 1080px;
+  height: 1920px;
+  overflow: hidden;
+  background: var(--ink);
+  color: var(--white);
+  font-family: 'Noto Sans', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+  font-kerning: normal;
+}
+
+.layer { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; pointer-events: none; }
+.abs { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+
+.display {
+  font-family: 'Parkinsans', 'Noto Sans', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.mask { overflow: hidden; padding: 0.12em 0.1em 0.2em 0; margin: -0.12em 0 -0.2em 0; white-space: nowrap; }
+.mask > span { display: block; will-change: transform; }
+
+.eyebrow {
+  font-family: 'Noto Sans', sans-serif;
+  font-weight: 650;
+  font-size: 24px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mint);
+  white-space: nowrap;
+}
+
+.ringdot {
+  position: absolute;
+  border-radius: 50%;
+  border: 3px solid var(--mint);
+  display: flex; align-items: center; justify-content: center;
+}
+.ringdot-core { width: 38%; height: 38%; border-radius: 50%; }
+
+/* Pastilles de critères (séquence problème) */
+.chip {
+  position: absolute; left: 0; top: 0;
+  display: flex; align-items: center; gap: 14px;
+  height: 72px; padding: 0 28px 0 22px;
+  border-radius: 36px;
+  background: var(--ink2);
+  border: 1.5px solid rgba(255, 255, 255, 0.16);
+  font-size: 30px; font-weight: 500; letter-spacing: -0.005em;
+  color: var(--white);
+  white-space: nowrap;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+.chip .ringdot { position: relative; width: 22px; height: 22px; border-width: 2.5px; flex: none; }
+.chip .q { color: var(--mint); margin-left: -6px; }
+
+.bead { position: absolute; left: 0; top: 0; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: var(--mint); }
+
+/* Cartes d'interface (fond papier) */
+.card {
+  position: absolute;
+  background: var(--white);
+  color: var(--ink);
+  border-radius: 32px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45), 0 2px 0 rgba(255, 255, 255, 0.04) inset;
+}
+.card .k { font-size: 26px; font-weight: 500; color: var(--paper-muted); letter-spacing: 0; }
+.card .v { font-size: 36px; font-weight: 650; color: var(--ink); letter-spacing: -0.01em; }
+.card .title { font-family: 'Parkinsans', sans-serif; font-weight: 600; font-size: 40px; letter-spacing: -0.03em; }
+.pill {
+  display: inline-flex; align-items: center; gap: 10px;
+  height: 52px; padding: 0 22px; border-radius: 26px;
+  font-size: 24px; font-weight: 650; white-space: nowrap;
+}
+.pill.mint { background: var(--mint); color: var(--ink); }
+.pill.soft { background: #eef2f0; color: #3d4643; }
+.pill.line { border: 2px solid #dde3e0; color: var(--ink); background: #fff; }
+.pill.dark { background: var(--ink); color: #fff; }
+
+.caption { font-size: 20px; font-weight: 500; letter-spacing: 0.04em; color: rgba(255, 255, 255, 0.42); white-space: nowrap; }
+
+/* Lecteur web (?play) */
+body.player { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 16px; background: #0a0a0a; font-family: 'Noto Sans', sans-serif; color: #fff; }
+#frame { position: relative; overflow: hidden; border-radius: 18px; box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6); }
+#frame #stage { transform-origin: 0 0; }
+#controls { display: flex; gap: 14px; align-items: center; width: min(92vw, 560px); }
+#controls button { background: #2acaa5; color: #111; border: 0; border-radius: 20px; padding: 8px 18px; font-weight: 700; cursor: pointer; }
+#controls input { flex: 1; accent-color: #2acaa5; }
+#controls span { font-variant-numeric: tabular-nums; min-width: 64px; text-align: right; opacity: 0.7; }
