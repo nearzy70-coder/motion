@@ -312,6 +312,8 @@ export function update(t, ctx) {
     lines.forEach((ln, i) => {
       const p = E.enter(prog(t, ins[i], ins[i] + (i === 3 ? 0.7 : 0.8)));
       ln.inner.style.transform = `translate3d(0,${((1 - p) * 135).toFixed(2)}%,0)`;
+      // Avant son entrée, la ligne est cachée : sinon le haut des lettres dépasse du masque
+      ln.wrap.style.visibility = t < ins[i] ? 'hidden' : '';
     });
   }
   // Le trait de feutre sur « simple. » (porté par le mot physique, qui remplace le span dès la rature)

@@ -525,10 +525,10 @@ def lufs(x):
     return float(re.findall(r"I:\s+(-?[\d.]+) LUFS", p.stderr.decode())[-1])
 
 
-# Sonie de diffusion (-14 LUFS) atteinte ici, sous un limiteur doux à -1,5 dBFS : l'export n'a plus qu'à vérifier
+# Sonie de diffusion (-14 LUFS) atteinte ici, sous un limiteur doux à -2 dBFS (marge pour l'encodage AAC)
 for _ in range(3):
-    mix *= 10 ** ((-14.0 - lufs(soft_limit(mix, -1.5))) / 20)
-mix = soft_limit(mix, -1.5)
+    mix *= 10 ** ((-14.0 - lufs(soft_limit(mix, -2.0))) / 20)
+mix = soft_limit(mix, -2.0)
 
 out = os.path.join(ROOT, "renders", "audio")
 write_wav(os.path.join(out, "le-fil-v3-mix.wav"), mix)
