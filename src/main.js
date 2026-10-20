@@ -2,8 +2,7 @@
 import { L, W, H, DURATION, FPS, T, BPM, VO } from './timeline.js';
 import { makeCordLayer } from './lib/cord.js';
 import { E, prog, lerp } from './lib/ease.js';
-import * as hook from './scenes/hook.js';
-import * as tangle from './scenes/tangle.js';
+import * as pile from './scenes/pile.js';
 import * as pull from './scenes/pull.js';
 import * as line from './scenes/line.js';
 import * as coverage from './scenes/coverage.js';
@@ -43,9 +42,9 @@ const ctx = {
 // Pas de grain : aplats d'encre nets (retour client)
 const grain = { update() {} };
 
-// end est construit avant hook : le fil de l'accroche et la fin partagent des mesures
-const BUILD = [end, hook, tangle, pull, line, coverage, free];
-const UPDATE = [hook, tangle, pull, line, coverage, free, end];
+// pile avant pull : le fil tiré au drop est celui qui a traversé la pile
+const BUILD = [end, pile, pull, line, coverage, free];
+const UPDATE = [pile, pull, line, coverage, free, end];
 
 async function init() {
   await Promise.all([
@@ -78,7 +77,9 @@ function seek(t) {
   ctx.cord.clear();
   for (const m of UPDATE) m.update(t, ctx);
   const z = camZoom(t);
-  const tr = z === 1 ? '' : `scale(${z.toFixed(5)})`;
+  // Secousse brève quand un mot lourd touche le sol (pile.js)
+  const dy = ctx.shared.shake ? ctx.shared.shake(t) : 0;
+  const tr = (Math.abs(dy) > 0.01 ? `translate3d(0,${dy.toFixed(2)}px,0) ` : '') + (z === 1 ? '' : `scale(${z.toFixed(5)})`);
   for (const l of zoomLayers) if (l.style.transform !== tr) l.style.transform = tr;
   grain.update(t);
 }

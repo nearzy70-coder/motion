@@ -2,18 +2,19 @@
   "name": "desk-to-desk-motion",
   "version": "1.0.0",
   "private": true,
-  "description": "Film publicitaire motion design Desk to Desk — « Le Fil » (9:16, rendu déterministe)",
+  "description": "Film publicitaire motion design Desk to Desk — « Le Fil » (1:1, rendu déterministe)",
   "type": "module",
   "scripts": {
     "preview": "node scripts/serve.mjs",
     "stills": "node scripts/stills.mjs",
-    "audio": "python3 audio/compose.py",
+    "audio": "cd audio && python3 compose_v3.py",
     "render": "node scripts/render.mjs",
-    "build": "python3 audio/compose.py && node scripts/render.mjs"
+    "build": "node scripts/export-cues.mjs 11 && cd audio && python3 compose_v3.py && cd .. && node scripts/render.mjs --f 11"
   },
   "dependencies": {
     "@fontsource-variable/noto-sans": "5.3.0",
     "@fontsource-variable/parkinsans": "5.3.0",
+    "planck": "1.5.1",
     "three": "0.186.1"
   },
   "devDependencies": {

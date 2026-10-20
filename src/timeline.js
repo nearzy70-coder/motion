@@ -29,12 +29,13 @@ export const VO = [
 
 export const T = {
   // 1. Accroche (voix : « Trouver » 0,25 s ; « c'est simple » 1,52 s ; « Enfin… » 2,64 s ; « sur le papier » 3,6 s)
-  l1: -0.25, l2: 1.3, cordIn: 1.6, under: 1.95, around: 2.35, strike: 2.75, paper: 3.5, hookOut: 4.4,
-  // 2. La pelote (« très vite » 5,2 s ; « La surface » 6,91 ; « Le budget » 7,85 ; « Le quartier » 8,8 ;
-  // « Le bail » 9,77 ; « Les visites » 10,61 ; « Et pendant ce temps » 12,31 ; « file » 14,1)
-  tangle: 4.8, tangle2: 5.55,
-  tags: [5.875, 6.375, 7.0, 7.375, 7.75, 8.25, 8.75, 9.25, 9.75, 10.125, 10.5, 11.0],
+  l1: -0.25, l2: 1.3, strike: 2.75, paper: 3.5,
+  // 2. La pile (« Parce que très vite » 4,83 s : la phrase s'effondre ; « La surface » 6,91 ; « Le budget » 7,85 ;
+  // « Le quartier » 8,8 ; « Le bail » 9,77 ; « Les visites » 10,61 ; « Et pendant ce temps » 12,31 ; « file » 14,1)
+  fall: 4.8, tangle: 4.8, tangle2: 5.55,
+  drops: [5.875, 6.375, 7.0, 7.375, 7.75, 8.25, 8.75, 9.25, 9.75, 10.125, 10.5, 11.0, 13.625],
   timeFlies: 12.25, file: 13.95,
+  thread: 14.25, // l'aiguille traverse la pile, dans le silence qui suit « le temps file »
   // 3. On tire le fil (« Desk to Desk » 15,4 s ; « tire le fil » 16,4 ; « Un conseiller dédié » 17,37 ;
   // « Un seul interlocuteur » 18,65 ; « Du brief… » 20,17)
   pull: 14.75, blind: 15.25, brand: [15.42, 15.72, 15.86], brand2: [16.36, 16.52, 16.72],

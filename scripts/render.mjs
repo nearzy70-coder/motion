@@ -31,9 +31,9 @@ await probe.close();
 
 // Échantillonnage temporel adaptatif : plus de sous-images là où le mouvement est très rapide
 // (panoramiques de la corde à linge : 0,55 s, très vifs → 12 sous-images)
-const FAST = [[T.pull - 0.25, T.blind + 0.75], [T.line - 0.05, T.line + 0.55], [T.free - 0.05, T.free + 0.7],
+const FAST = [[T.thread, T.blind + 0.75], [T.line - 0.05, T.line + 0.55], [T.free - 0.05, T.free + 0.7],
   ...[T.fmt2, T.fmt3, T.s1, T.s2, T.s3, T.s4, T.s5, T.reneg, T.day].map((tb) => [tb - 0.58, tb + 0.05])];
-const MEDIUM = [[T.cordIn, T.strike + 0.15], [T.tangle, T.pull - 0.25], [T.stamp - 0.15, T.stamp + 0.3], [T.s5 - 0.2, T.s5 + 0.5],
+const MEDIUM = [[T.strike - 0.05, T.strike + 0.4], [T.fall, T.thread], [T.stamp - 0.15, T.stamp + 0.3], [T.s5 - 0.2, T.s5 + 0.5],
   [T.map, T.free], [T.vousOut - 0.25, T.dot + 0.35]];
 const inAny = (t, W) => W.some(([a, b]) => t >= a && t <= b);
 const samplesFor = (t) => (S_BASE <= 1 ? 1 : inAny(t, FAST) ? 12 : inAny(t, MEDIUM) ? 6 : S_BASE);

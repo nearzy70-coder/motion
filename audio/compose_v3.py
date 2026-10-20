@@ -174,6 +174,26 @@ def pluck(midi, vel=0.6, decay=0.9):
     return fin((x * vel).astype(np.float32))
 
 
+def marker(dur=0.24, vel=0.5):
+    """Feutre sur papier : bruit filtré, grain irrégulier, attaque et relâchement du geste."""
+    n = int((dur + 0.06) * SR)
+    t = np.arange(n) / SR
+    grain = 1 + 0.5 * np.sin(2 * np.pi * 37 * t + 3 * np.sin(2 * np.pi * 5 * t))
+    env = np.minimum(1, t / 0.02) * np.where(t < dur, 1.0, np.exp(-(t - dur) / 0.02))
+    x = bp(rng.standard_normal(n), 1800, 6500) * grain * env
+    return fin((x * vel).astype(np.float32))
+
+
+def thud(vel=0.5):
+    """Mot qui tombe sur la pile : coup sourd et bref, un peu de matière."""
+    n = int(0.3 * SR)
+    t = np.arange(n) / SR
+    f = 52 + 70 * np.exp(-t / 0.02)
+    body = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / 0.085)
+    knock = lp(rng.standard_normal(n), 1400) * np.exp(-t / 0.018)
+    return fin(((0.9 * body + 0.6 * knock) * vel).astype(np.float32))
+
+
 # ---------------------------------------------------------------- échantillons réels
 piano = upright_piano()
 glock = Instrument(bank("Percussion/Glock/*.wav", r"medium_([A-G]#?\d)\.wav", offset=12, layer_group=None), 5.0)
@@ -282,7 +302,7 @@ comp(T["strike"], "Bbm6", 1.6, 0.45, 0.9)
 bass_b.add(bass(34, 1.2, 0.55), T["strike"])
 for i, m in enumerate([84, 79, 77, 73]):
     pl_b.add(pluck(m, 0.22 - 0.03 * i, 0.5), T["strike"] + 0.06 + i * 0.07, pan=0.3 - 0.2 * i)
-hit(foley_b, GUIRO, T["cordIn"] + 0.05, 0.12, 0.2, semis=-5, dur=0.6, rel=0.15)
+foley_b.add(marker(0.24, 0.15), T["strike"], pan=0.15)                 # trait de feutre sur « simple »
 reverse_swell(at(-5), "Dm9", 0.9, 0.35)
 hats16(at(-6, 3.0), at(-5), 0.25)
 
@@ -309,10 +329,13 @@ for i, name in enumerate(PROBLEM):
         for b in range(4):
             hit(perc_b, SHAKER, t0 + (b + 0.5) * BEAT, 0.25, -0.35)
 # Les étiquettes : une note par critère, de plus en plus aiguë ; les mots dits par la voix plus marqués
-TAG_NOTES = [62, 65, 67, 69, 72, 74, 77, 79, 81, 84, 86, 89]
-for k, t in enumerate(T["tags"]):
-    spoken = k in (2, 4, 6, 8, 10)
+TAG_NOTES = [62, 65, 67, 69, 72, 74, 77, 79, 81, 84, 86, 89, 64]
+for k, d in enumerate(CUES["drops"]):
+    t, spoken = d["t"], d["spoken"]
     pl_b.add(pluck(TAG_NOTES[k], 0.5 if spoken else 0.3, 0.55), t, pan=(-0.35, 0.35)[k % 2])
+# Chaque mot qui touche la pile : un coup sourd, proportionnel au choc
+for l in CUES["landings"]:
+    foley_b.add(thud(0.25 + 0.75 * l["s"]), l["t"], 0.3, pan=rng.uniform(-0.25, 0.25))
 # « Et pendant ce temps… le temps file » : le temps devient un tic-tac de claves, puis roulement et arrêt net
 t_tick = T["timeFlies"]
 k = 0
@@ -329,7 +352,8 @@ for b in range(2):
     K(t0 + b * BEAT, 0.8)
 hats16(t0, t0 + 2 * BEAT, 0.4)
 STOP = t0 + 2 * BEAT                    # silence avant le drop : seule la corde se tend
-hit(foley_b, GUIRO, T["pull"] - 0.2, 0.22, -0.1, semis=-7, dur=0.8, rel=0.2)
+hit(foley_b, GUIRO, T["thread"], 0.2, 0.1, semis=3, dur=0.36, rel=0.08)  # l'aiguille coud la pile
+hit(foley_b, GUIRO, T["pull"] - 0.1, 0.22, -0.1, semis=-7, dur=0.7, rel=0.2)  # le fil se tend
 reverse_swell(A0, "Bbmaj9", 0.95, 0.55)
 
 # ================================================================ 3 à 7. Le groove (15,25 → 54,75 s)

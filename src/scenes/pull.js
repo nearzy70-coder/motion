@@ -1,25 +1,34 @@
-// 3. On tire le fil : la corde est tirée par ses deux bouts (simulation physique),
-// les étiquettes s'alignent, puis la corde remonte comme un store et révèle l'aplat menthe.
+// 3. On tire le fil : le fil qui traverse la pile est tiré par ses deux bouts (simulation physique) ;
+// les mots glissent le long du fil jusqu'à s'y aligner, puis le fil remonte comme un store et révèle l'aplat menthe.
 import { el, show, op } from '../lib/dom.js';
 import { E, prog, lerp, bezier } from '../lib/ease.js';
 import { slice } from '../lib/path.js';
 import { simulateRope } from '../lib/rope.js';
 import { T, L, W, H, pick } from '../timeline.js';
-import { CORD_W, placeTag } from './tangle.js';
+import { CORD_W } from './pile.js';
 
 const blindEase = bezier(0.72, 0, 0.18, 1);
 const TOP_Y = pick(44, 34);
-let rope, tagIdx, mint, brand, subs, tags, tA;
+let rope, mint, brand, subs, beads, slots, total, tA, kBead, drawNeedle, s0;
 
 export function build(ctx) {
   const tg = ctx.shared.tangle;
   tA = tg.tAnchor;
-  const s0 = tg.tailAt(tA);
+  s0 = tg.tailAt(tA);
   const init = slice(tg.path, tg.Ls, s0, tg.headAt(tA));
-  const total = tg.Ls[tg.Ls.length - 1] - s0;
-  // Les étiquettes du milieu de la pelote se retrouvent au centre de l'image une fois la corde tendue
-  const sMid = (tg.tagS[3] + tg.tagS[8]) / 2 - s0;
-  const x0 = W / 2 - sMid;
+  total = tg.Ls[tg.Ls.length - 1] - s0;
+  // Places des mots sur le fil tendu : côte à côte, réduits, la rangée centrée dans l'image
+  beads = ctx.shared.beads;
+  drawNeedle = ctx.shared.drawNeedle;
+  const gap = pick(34, 26);
+  const order = beads.map((_, i) => i).sort((a, b) => beads[a].s - beads[b].s);
+  const span = (k) => order.reduce((a, i) => a + beads[i].w * k, 0) + gap * (beads.length - 1);
+  kBead = 0.5;
+  if (span(kBead) > total * 0.94) kBead *= (total * 0.94 - gap * (beads.length - 1)) / (span(kBead) - gap * (beads.length - 1));
+  slots = new Array(beads.length);
+  let acc = (total - span(kBead)) / 2;
+  order.forEach((i) => { slots[i] = acc + (beads[i].w * kBead) / 2; acc += beads[i].w * kBead + gap; });
+  const x0 = W / 2 - total / 2;
   const a0 = init[0], b0 = init[init.length - 1];
   const e = (t) => E.inOutCubic(prog(t, tA, T.pull + 0.48));
   rope = simulateRope({
@@ -27,8 +36,6 @@ export function build(ctx) {
     endA: (t) => [lerp(a0[0], x0, e(t)), lerp(a0[1], L.pullY, e(t))],
     endB: (t) => [lerp(b0[0], x0 + total * 0.992, e(t)), lerp(b0[1], L.pullY, e(t))],
   });
-  tagIdx = tg.tagS.map((s) => ((s - s0) / total) * (rope.N - 1));
-  tags = ctx.shared.tagEls;
 
   mint = el('div', { cls: 'layer', style: { background: 'var(--mint)' } }, ctx.layers.mint);
 
@@ -62,23 +69,32 @@ export function update(t, ctx) {
   let blindTop = H;
   if (phys) {
     const dy = cordY(t);
-    const pts = rope.at(Math.min(t, rope.t1)).map((p) => [p[0], p[1] + dy]);
+    // Le fil, très long (il a cousu toute la pile), descend jusqu'à la ligne du store pendant la traction
+    const down = E.inOutCubic(prog(t, tA + 0.08, T.blind));
+    const pts = rope.at(Math.min(t, rope.t1)).map((p) => [p[0], lerp(p[1], L.pullY, down) + dy]);
     ctx.cord.draw(pts, { width: CORD_W, shadow: t > T.blind ? 1.4 : 1 });
     if (t >= T.blind) blindTop = L.pullY + dy;
 
-    // Étiquettes entraînées par la corde
+    // L'aiguille, au bout du fil, sort de l'image pendant la traction
+    const nA = pts[pts.length - 1], nB = pts[pts.length - 4];
+    drawNeedle(ctx.cord.g, nA, Math.atan2(nA[1] - nB[1], nA[0] - nB[0]));
+
+    // Les mots glissent le long du fil jusqu'à leur place, se redressent et se resserrent
     const lift = E.inOutCubic(prog(t, T.blind, T.blind + 0.5));
-    tags.forEach((tg, k) => {
-      const f = tagIdx[k];
-      const i = Math.min(rope.N - 2, Math.floor(f)), u = f - i;
+    const slide = E.inOutCubic(prog(t, tA, T.pull + 0.48));
+    const settle = E.inOutCubic(prog(t, tA + 0.05, T.pull + 0.4));
+    beads.forEach((b, k) => {
+      const s = lerp(b.s - s0, slots[k], slide);
+      const f = Math.max(0, Math.min(rope.N - 1.001, (s / total) * (rope.N - 1)));
+      const i = Math.floor(f), u = f - i;
       const p = pts[i], q = pts[i + 1];
       const x = p[0] + (q[0] - p[0]) * u, y = p[1] + (q[1] - p[1]) * u;
-      let ang = (Math.atan2(q[1] - p[1], q[0] - p[0]) * 180) / Math.PI;
-      if (ang > 90) ang -= 180;
-      if (ang < -90) ang += 180;
-      const settle = E.inOutCubic(prog(t, tA, T.pull + 0.3));
-      const a = lerp(tg.base, ang * 0.85, settle) + lift * 64;
-      placeTag(tg, x, y, a, 1, 1 - prog(t, T.blind + 0.35, T.blind + 0.6));
+      let ang = Math.atan2(q[1] - p[1], q[0] - p[0]);
+      if (ang > Math.PI / 2) ang -= Math.PI;
+      if (ang < -Math.PI / 2) ang += Math.PI;
+      const a0 = b.pose(tA)[2];
+      const a = lerp(a0, ang, settle) + lift * 1.1;
+      b.place(x, y, a, lerp(1, kBead, settle), 1 - prog(t, T.blind + 0.3, T.blind + 0.55));
     });
   }
 

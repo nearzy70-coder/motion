@@ -26,9 +26,9 @@ Retours client sur la v2 :
 
 | Temps | Séquence | Musique |
 |-------|----------|---------|
-| 0 – 4,4 s | Accroche : « Trouver des bureaux, c'est simple. » La corde barre « simple », puis « Sur le papier. » | Accords de piano électrique sautillants. Sur « Enfin… », l'harmonie tourne au mineur et tout s'arrête |
-| 4,8 – 14,3 s | La pelote : 12 étiquettes nouées au fil, les 5 critères cités tombent avec leur mot. « Et le temps file. » | Le groove se construit (ré mineur). Une note de pluck par étiquette, de plus en plus aiguë. Le temps devient un tic-tac de claves, puis un roulement de caisse claire |
-| 14,3 – 15,25 s | La corde est tirée | Silence, frottement de guiro (la corde se tend), accord inversé qui aspire vers le drop |
+| 0 – 4,4 s | Accroche : « Trouver des bureaux, c'est simple. » Un trait de feutre barre « simple », puis « Sur le papier. » (v4) | Accords de piano électrique sautillants. Sur « Enfin… », l'harmonie tourne au mineur et tout s'arrête |
+| 4,8 – 14,3 s | La pile (v4) : la phrase s'effondre, 13 critères tombent et s'empilent, les 5 critères cités tombent avec leur mot. « Et le temps file. » | Le groove se construit (ré mineur). Une note de pluck par étiquette, de plus en plus aiguë. Le temps devient un tic-tac de claves, puis un roulement de caisse claire |
+| 14,3 – 15,25 s | L'aiguille coud la pile, le fil est tiré, les mots s'y alignent (v4) | Silence, frottement de guiro (la corde se tend), accord inversé qui aspire vers le drop |
 | 15,25 – 22 s | **Drop** : store menthe, « Desk to Desk tire le fil. », sous-titres | Groove complet (grosse caisse, claps, charleston, basse, piano électrique), cymbale et infra-grave |
 | 22,25 – 49,3 s | Corde à linge : 3 formats, 5 étapes, 2 services | Le groove continue. Le motif de pluck ne joue que dans les silences de la voix. Bruitages réels : clac de pince à linge à chaque arrivée, punaises, maquette, tampon (la batterie se tait un temps avant le coup), clés |
 | 49,75 – 54,5 s | Carte : un fil part de Paris vers chaque ville nommée | Une note de glockenspiel par ville |
@@ -39,3 +39,22 @@ Retours client sur la v2 :
 
 La mention de la commission est affichée de 55,65 s (store « gratuit ») jusqu'à la fin :
 « \*Commission payée par le propriétaire. Certaines offres, en général en bail commercial, peuvent faire exception. »
+
+## v4 : nouvelle ouverture (retour client)
+
+Retour sur la v3 : le début (la corde qui passe sous « simple », le barre puis serpente entre les étiquettes) était
+« bien, mais pas top top ». Proposition v4, de 0 à 15,25 s. Le reste du film est inchangé.
+
+1. **Typographie physique.**
+   - « Trouver des bureaux, c'est simple. » arrive mot à mot ; un trait de feutre menthe, tracé à la main, barre « simple ».
+   - Sur « Parce que très vite », la phrase s'effondre : chaque mot devient un corps rigide (planck.js, moteur Box2D, simulation précalculée à 240 Hz, donc rendu déterministe).
+2. **La pile.**
+   - Les critères tombent un à un, au moment où la voix les dit : « Surface », « Budget », « Quartier », « Bail 3/6/9 », « Visites », puis « Délais » sur « le temps file ».
+   - Les mots dits sont grands, blancs et tombent presque à plat ; les autres sont plus petits, gris ou menthe.
+   - Chaque atterrissage franc donne un coup sourd au son et une brève secousse de caméra.
+3. **Le fil devient la solution, plus le problème.**
+   - Dans le silence avant le drop, une aiguille et son fil menthe cousent la pile rang par rang, en sortant de l'image à chaque demi-tour.
+   - Le fil est tiré : les mots glissent dessus et s'alignent proprement, puis la ligne remonte comme un store et révèle l'aplat menthe (« Desk to Desk tire le fil »).
+
+Pourquoi : dans la v3, le fil était à la fois le désordre et la solution. Ici, le désordre est fait des mots du
+problème, que l'on lit en grand, et le fil n'apparaît que pour remettre de l'ordre.

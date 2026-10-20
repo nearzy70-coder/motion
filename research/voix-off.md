@@ -69,9 +69,9 @@ formats, avant et après le tampon, avant la fin. Le placement exact est dans `s
 
 | Film | Voix | À l'écran |
 |------|------|-----------|
-| 0,25 – 4,4 s | « Trouver des bureaux… c'est simple. Enfin… sur le papier. » | Le titre ; la corde barre « simple » sur « Enfin… » ; « Sur le papier. » |
-| 4,8 – 14,3 s | « Parce que très vite, tout s'emmêle. La surface. Le budget. Le quartier. Le bail. Les visites. Et pendant ce temps… le temps file. » | « Très vite, tout s'emmêle. » ; les étiquettes se nouent au fil, chaque critère cité arrive avec son mot ; « Et le temps file. », « file. » sur le mot |
-| 14,3 – 15,25 s | (silence) | La corde est tirée ; la musique se tait |
+| 0,25 – 4,4 s | « Trouver des bureaux… c'est simple. Enfin… sur le papier. » | Le titre ; un trait de feutre menthe barre « simple » sur « Enfin… » ; « Sur le papier. » |
+| 4,8 – 14,3 s | « Parce que très vite, tout s'emmêle. La surface. Le budget. Le quartier. Le bail. Les visites. Et pendant ce temps… le temps file. » | Sur « très vite », la phrase s'effondre. Les critères tombent un à un et s'empilent, chaque critère cité avec son mot. « Et le temps file. », « file. » sur le mot ; « Délais » tombe en dernier |
+| 14,3 – 15,25 s | (silence) | Une aiguille coud la pile rang par rang, puis le fil est tiré : les mots s'alignent dessus ; la musique se tait |
 | 15,4 – 22 s | « Desk to Desk tire le fil. Un conseiller dédié. Un seul interlocuteur. Du brief… jusqu'à la remise des clés. » | Drop : store menthe, texte mot à mot avec la voix |
 | 22,3 – 26,7 s | « Coworking ? Bureau opéré ? Bail commercial ? On vous aide à choisir. » | Les trois fiches, un panoramique par question |
 | 27,1 – 44,4 s | Les 5 étapes, une phrase chacune | Une fiche par étape, la caméra arrive sur la phrase ; « loyer, charges, travaux, durée » soulignés au mot près, tampon « Négocié » juste après « durée » |

@@ -1,4 +1,4 @@
-# Desk to Desk — « Le Fil » v3
+# Desk to Desk — « Le Fil » v4
 
 Film publicitaire en motion design pour [Desk to Desk](https://www.desk-to-desk.com/), courtier en bureaux.
 **68 s, en français, avec la voix off ElevenLabs fournie par le client.** Livrable : **format carré 1:1** (1080 × 1080). Le code garde aussi une mise en page 9:16 (`--f 916`), non rendue.
@@ -9,13 +9,18 @@ Film publicitaire en motion design pour [Desk to Desk](https://www.desk-to-desk.
 
 | Fichier | Contenu |
 |---------|---------|
-| `renders/final/desk-to-desk_le-fil-v3_1x1_1080x1080.mp4` | **Film final, pleine qualité** : 1080 × 1080, 30 i/s, H.264 High (CRF 12, aplats nets), BT.709, AAC 192 kb/s 48 kHz, -14 LUFS |
-| `renders/final/planche-contact-v3_1x1.jpg` | Planche contact extraite du MP4 (une image par seconde) |
+| `renders/final/desk-to-desk_le-fil-v4_1x1_1080x1080.mp4` | **Film final, pleine qualité** (nouvelle ouverture) : 1080 × 1080, 30 i/s, H.264 High (CRF 12, aplats nets), BT.709, AAC 192 kb/s 48 kHz, -14 LUFS |
+| `renders/final/desk-to-desk_le-fil-v3_1x1_1080x1080.mp4` | Version 3, ouverture « corde » : conservée pour comparaison |
+| `renders/final/planche-contact-v4_1x1.jpg` | Planche contact extraite du MP4 (une image par seconde) |
 | `renders/audio/le-fil-v3-mix.wav` | Bande-son finale : voix et musique mixées (48 kHz, 16 bits, -14 LUFS) |
 | `renders/audio/le-fil-v3-musique.wav` | Musique seule, sans atténuation sous la voix (pour un remontage) |
 | `renders/audio/le-fil-v3-voix.wav` | Voix seule, placée et traitée comme dans le film |
 | `renders/final/v1/` | Version 1 (33 s), conservée pour comparaison |
 | `research/` | Faits vérifiés et sources, storyboards v2 et v3, texte et placement de la voix off |
+
+## v4 : nouvelle ouverture
+
+La phrase d'accroche s'effondre et les critères tombent un à un, avec la voix, en une pile de mots (physique de corps rigides). Une aiguille coud la pile, et le fil tiré aligne les mots avant le drop. Détails dans `research/storyboard-v3.md`.
 
 ## Ce qui a changé en v3 (retours client)
 
@@ -57,7 +62,7 @@ npm install
 # ou dans le dossier indiqué par la variable VSCO_DIR
 node scripts/export-cues.mjs 11     # repères du film et placement de la voix (format 1:1) -> audio/cues.json
 cd audio && python3 compose_v3.py   # musique + voix -> renders/audio/le-fil-v3-*.wav (environ 30 s)
-cd .. && node scripts/render.mjs --f 11   # rendu 1:1 (environ 20 min, 4 workers)
+cd .. && node scripts/render.mjs --f 11 --name desk-to-desk_le-fil-v4   # rendu 1:1 (environ 30 min, 4 workers)
 npm run preview                     # lecteur web : /src/index.html?play&f=11
 node scripts/stills.mjs --f 11 8 18.5 40    # images de contrôle + planche contact
 ```
@@ -76,7 +81,7 @@ src/
   lib/cord.js        rendu de la cordelette : ombres, torsion, reflet, croisements
   lib/texture.js     papier, encre de tampon (grain disponible mais désactivé)
   popup3d.js         maquette « pop-up » Three.js (trait d'architecte)
-  scenes/            hook, tangle, pull, line (corde à linge + caméra), coverage, free, end
+  scenes/            pile (accroche, pile de mots, aiguille), pull, line (corde à linge + caméra), coverage, free, end
   sheets/            formats, brief, map, plan, contract, keys, services
 audio/compose_v3.py  musique (synthèse + échantillons CC0), placement de la voix, ducking, mixage
 audio/dsp.py         filtres, réverbération, compression, banques d'échantillons
@@ -94,7 +99,7 @@ Le fichier logo officiel n'a pas pu être récupéré (site inaccessible depuis 
 - Typographies Parkinsans et Noto Sans, licence SIL OFL (`public/assets/fonts/`).
 - Voix off : générée par le client avec ElevenLabs (v4, voix « Victoria »), à partir du texte de `research/voix-off.md`.
 - Échantillons : **Versilian Studios Chamber Orchestra 2 Community Edition** (licence CC0), https://github.com/sgossner/VSCO-2-CE ; piano droit échantillonné par Simon Dalzell (Ivy Audio). Aucune attribution n'est exigée par la licence ; elle reste encouragée par les auteurs.
-- Three.js (MIT).
+- Three.js (MIT) ; planck.js, moteur physique 2D (MIT).
 
 ## Points à valider avant diffusion
 
