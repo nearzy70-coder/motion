@@ -28,21 +28,22 @@ fs.mkdirSync(outDir, { recursive: true });
 const { server, port } = await startServer();
 // Spécifications lues dans le film lui-même
 const probe = await chromium.launch({ args: CHROME_ARGS });
-const { spec, T } = await (await openStage(probe, port, FORMAT, OPENING, FILM)).page.evaluate(() => ({ spec: window.__spec, T: window.__cues.T }));
+const { spec, T, sampling, audio } = await (await openStage(probe, port, FORMAT, OPENING, FILM)).page.evaluate(() => ({ spec: window.__spec, T: window.__cues.T, sampling: window.__cues.sampling, audio: window.__cues.audio }));
 await probe.close();
 
 // Échantillonnage temporel adaptatif : plus de sous-images là où le mouvement est très rapide
 // (panoramiques de la corde à linge : 0,55 s, très vifs → 12 sous-images)
-const FAST = [[T.thread, T.blind + 0.75], [T.line - 0.05, T.line + 0.55], [T.free - 0.05, T.free + 0.7],
+// Un film peut fournir ses propres fenêtres (window.__cues.sampling) ; sinon, celles du film « Le Fil »
+const FAST = sampling ? sampling.fast : [[T.thread, T.blind + 0.75], [T.line - 0.05, T.line + 0.55], [T.free - 0.05, T.free + 0.7],
   ...[T.fmt2, T.fmt3, T.s1, T.s2, T.s3, T.s4, T.s5, T.reneg, T.day].map((tb) => [tb - 0.58, tb + 0.05])];
-const MEDIUM = [[T.strike - 0.15, T.strike + 0.7], [T.fall, T.thread], [T.stamp - 0.15, T.stamp + 0.3], [T.s5 - 0.2, T.s5 + 0.5],
+const MEDIUM = sampling ? sampling.medium : [[T.strike - 0.15, T.strike + 0.7], [T.fall, T.thread], [T.stamp - 0.15, T.stamp + 0.3], [T.s5 - 0.2, T.s5 + 0.5],
   [T.map, T.free], [T.vousOut - 0.25, T.dot + 0.35]];
 // Film « ligne » : la caméra longe le trait en continu, toute la partie noire passe en échantillonnage moyen
-if (FILM === 'ligne') MEDIUM.push([T.line, T.free]);
+if (!sampling && FILM === 'ligne') MEDIUM.push([T.line, T.free]);
 // Film « maquette » : rendu 3D logiciel (lourd) ; la plongée le long du bon chemin passe en échantillonnage moyen,
 // et les fenêtres « rapide » et « moyen » prennent un peu moins de sous-images
 const HEAVY = FILM === 'maquette';
-if (HEAVY) MEDIUM.push([T.blind + 0.75, T.line], [T.choose - 0.3, T.s1 + 0.3]);
+if (HEAVY && !sampling) MEDIUM.push([T.blind + 0.75, T.line], [T.choose - 0.3, T.s1 + 0.3]);
 const inAny = (t, W) => W.some(([a, b]) => t >= a && t <= b);
 const samplesFor = (t) => (S_BASE <= 1 ? 1 : inAny(t, FAST) ? (HEAVY ? 8 : 12) : inAny(t, MEDIUM) ? (HEAVY ? 4 : 6) : S_BASE);
 const FPS = spec.FPS;
@@ -89,7 +90,7 @@ console.log(`Capture terminée : ${jobs.length} sous-images en ${((Date.now() - 
 if (errors.length) console.warn('Erreurs page :\n' + errors.join('\n'));
 
 // --- Audio : normalisation -14 LUFS (2 passes), crête vraie -1 dBTP
-const wav = path.join(ROOT, 'renders', 'audio', FILM || OPENING ? `le-fil-${FILM || OPENING}-mix.wav` : 'le-fil-v3-mix.wav');
+const wav = audio ? path.join(ROOT, audio) : path.join(ROOT, 'renders', 'audio', FILM || OPENING ? `le-fil-${FILM || OPENING}-mix.wav` : 'le-fil-v3-mix.wav');
 const hasAudio = fs.existsSync(wav);
 let afilter = null;
 if (hasAudio) {

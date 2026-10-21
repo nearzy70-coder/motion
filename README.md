@@ -1,4 +1,4 @@
-# Desk to Desk — « Le Fil » v7
+# Desk to Desk — « Le Fil » v7 et « Le Plan » v8
 
 Film publicitaire en motion design pour [Desk to Desk](https://www.desk-to-desk.com/), courtier en bureaux.
 **68 s, en français, avec la voix off ElevenLabs fournie par le client.** Livrable : **format carré 1:1** (1080 × 1080). Le code garde aussi une mise en page 9:16 (`--f 916`), non rendue.
@@ -17,6 +17,29 @@ Film publicitaire en motion design pour [Desk to Desk](https://www.desk-to-desk.
 | `renders/audio/le-fil-v3-voix.wav` | Voix seule, placée et traitée comme dans le film |
 | `renders/final/v1/` | Version 1 (33 s), conservée pour comparaison |
 | `research/` | Faits vérifiés et sources, storyboards v2 et v3, texte et placement de la voix off |
+
+## v8 : « Le Plan » (nouveau film, nouvelle voix off)
+
+**`renders/final/desk-to-desk_le-plan-v8_1x1_1080x1080.mp4`** (1:1, 76,5 s). Planche contact : `renders/final/planche-contact-v8-le-plan_1x1.jpg`.
+- **Voix off :** la nouvelle voix ElevenLabs du client (`audio/vo/voix-off-v8-elevenlabs.mp3`). Elle a été transcrite localement, hors ligne, sans envoi à un service tiers.
+- **Musique :** originale (`audio/compose_v8.py`). Bande-son dans `renders/audio/le-plan-v8-mix.wav`, avec ses pistes `-musique` et `-voix`.
+
+Tout le film est un grand plan d'architecte sur papier blanc, parcouru par une seule caméra. Le protagoniste est un
+point d'encre, « vous » ; Desk to Desk est l'anneau menthe qui l'entoure à partir du drop. Déroulé :
+1. L'entreprise grandit, puis les murs se resserrent.
+2. La recherche, un verbe par action.
+3. Pendant ce temps, l'entreprise en pause.
+4. Quatre murs devenus quatre cotes (endroit, conditions, configuration, moment), puis tout repose sur le point, jusqu'au chaos.
+5. Aplat menthe sur « Desk to Desk ».
+6. De la recherche à la signature.
+7. L'espace qui correspond exactement.
+8. Simple, efficace : le temps revient à l'entreprise.
+9. Signature et mention.
+
+Détails, transcription et minutage : `research/storyboard-v8.md`. Code : `src/v8/` (page autonome `src/v8/index.html`).
+
+Rendu : `node scripts/export-cues.mjs 11 '' plan`, `cd audio && python3 compose_v8.py`, puis
+`node scripts/render.mjs --f 11 --v plan --name desk-to-desk_le-plan-v8`.
 
 ## v7 : « La maquette » (version complète tout en 3D)
 

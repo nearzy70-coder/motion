@@ -37,7 +37,9 @@ export async function openStage(browser, port, format = '916', opening = '', fil
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e)));
   page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
-  await page.goto(`http://127.0.0.1:${port}/src/index.html?f=${format}${opening ? '&o=' + opening : ''}${film ? '&v=' + film : ''}`);
+  // Les films qui ont leur propre page (v8 « Le Plan ») ; les autres partagent src/index.html
+  const own = { plan: 'src/v8/index.html' }[film];
+  await page.goto(own ? `http://127.0.0.1:${port}/${own}?f=${format}` : `http://127.0.0.1:${port}/src/index.html?f=${format}${opening ? '&o=' + opening : ''}${film ? '&v=' + film : ''}`);
   const ok = await page.evaluate(() => window.__ready);
   if (!ok) {
     const e = await page.evaluate(() => window.__error);
