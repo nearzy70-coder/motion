@@ -1,4 +1,4 @@
-# Desk to Desk — « Le Fil » v7 et « Le Plan » v8
+# Desk to Desk — « Le Fil » v7 et v9, « Le Plan » v8
 
 Film publicitaire en motion design pour [Desk to Desk](https://www.desk-to-desk.com/), courtier en bureaux.
 **68 s, en français, avec la voix off ElevenLabs fournie par le client.** Livrable : **format carré 1:1** (1080 × 1080). Le code garde aussi une mise en page 9:16 (`--f 916`), non rendue.
@@ -17,6 +17,20 @@ Film publicitaire en motion design pour [Desk to Desk](https://www.desk-to-desk.
 | `renders/audio/le-fil-v3-voix.wav` | Voix seule, placée et traitée comme dans le film |
 | `renders/final/v1/` | Version 1 (33 s), conservée pour comparaison |
 | `research/` | Faits vérifiés et sources, storyboards v2 et v3, texte et placement de la voix off |
+
+## v9 : « Axo » (voix d'origine, axonométrie)
+
+**`renders/final/desk-to-desk_le-fil-v9-axo_1x1_1080x1080.mp4`** (1:1, 68 s). Planche contact : `renders/final/planche-contact-v9-axo_1x1.jpg`.
+- **Voix :** la voix d'origine. Le fichier renvoyé par le client est identique à `audio/vo/voix-off-elevenlabs.mp3`.
+- **Image :** tout le récit en axonométrie 3D, avec des volumes nets, des arêtes à l'encre, la sphère « vous » et le cube Desk to Desk.
+- **Fonds et transitions :** papier, nuit et menthe, avec iris, volets, store et bascule du plan en 3D.
+- **Typographie :** animée lettre à lettre.
+- **Bande-son :** `renders/audio/le-fil-axo-mix.wav`.
+
+Détails : `research/storyboard-v9.md`. Code : `src/v9/` (page autonome `src/v9/index.html`).
+
+Rendu : `node scripts/export-cues.mjs 11 '' axo`, `cd audio && python3 compose_v3.py axo`, puis
+`node scripts/render.mjs --f 11 --v axo --name desk-to-desk_le-fil-v9-axo`.
 
 ## v8 : « Le Plan » (nouveau film, nouvelle voix off)
 

@@ -129,3 +129,18 @@ def thud(vel=0.5):
     body = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t / 0.085)
     knock = lp(rng.standard_normal(n), 1400) * np.exp(-t / 0.018)
     return fin(((0.9 * body + 0.6 * knock) * vel).astype(np.float32))
+
+
+def whoosh(dur=0.35, vel=0.5, up=True, lo=500, hi=6000):
+    """Souffle : bruit réparti en bandes fixes dont le gain suit une fréquence qui glisse (geste rapide, volet)."""
+    n = int((dur + 0.08) * SR)
+    t = np.arange(n) / SR
+    k = np.clip(t / dur, 0, 1)
+    fc = np.log2(lo) + (np.log2(hi) - np.log2(lo)) * (k if up else 1 - k)
+    x = rng.standard_normal(n)
+    out = np.zeros(n)
+    for c in np.linspace(np.log2(lo), np.log2(hi), 9):
+        f = 2 ** c
+        out += bp(x, f / 1.35, min(f * 1.35, SR / 2 - 100)) * np.exp(-((fc - c) / 0.45) ** 2)
+    env = np.sin(np.pi * np.clip(t / dur, 0, 1)) ** 1.5
+    return fin((out * env * vel).astype(np.float32))

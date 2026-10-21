@@ -429,7 +429,42 @@ for tc in (T["line"], T["map"]):
     hit(fx_b, CYM_SOFT, tc, 0.4, -0.15)
 LIGNE = CUES.get("FILM") == "ligne"   # film « en un seul trait » : ses propres bruitages (plus de pinces ni de maquette)
 MAQUETTE = CUES.get("FILM") == "maquette"   # film « maquette » 3D : bruitages de la maquette
-if MAQUETTE:
+AXO = CUES.get("FILM") == "axo"              # film v9 « Axo » : bruitages de l'axonométrie
+if AXO:
+    from synth import whoosh
+    foley_b.add(marker(0.7, 0.05), CUES["plan"], pan=0.1)                 # le trait droit sur le plan
+    foley_b.add(whoosh(0.8, 0.06, True, 300, 3000), T["strike"] - 0.05, pan=-0.1)   # le plan bascule en 3D
+    foley_b.add(whoosh(0.5, 0.08, False, 300, 5000), CUES["iris"], pan=0.0)         # iris noir
+    for tw, up in zip(CUES["wipes"], (True, True, False)):                 # volets
+        foley_b.add(whoosh(0.38, 0.1, up, 500, 7000), tw, pan=0.0)
+    foley_b.add(thud(0.45), CUES["sub1Land"], 0.35, pan=-0.1)               # le conseiller se pose
+    for k_ in range(9):                                                     # un seul interlocuteur : les autres s'effacent
+        hit(foley_b, CLACK, CUES["absorb"] + k_ * 0.04, 0.14, rng.uniform(-0.4, 0.4), semis=4 + k_, dur=0.07, rel=0.03)
+    hit(foley_b, SLEIGH, CUES["keyTurn1"], 0.3, 0.3)                       # la clé du brief aux clés
+    for k_, tf_ in enumerate(CUES["floors"]):                               # les étages sortent comme des tiroirs
+        hit(foley_b, GUIRO, tf_, 0.14, (-0.2, 0.1, 0.25)[k_], semis=(-4, 2, 6)[k_], dur=0.4, rel=0.1)
+    foley_b.add(whoosh(0.5, 0.06, True, 400, 4000), CUES["spread"], pan=0.0)
+    for k_, th in enumerate(CUES["selHops"]):                               # le cadre de choix passe d'une option à l'autre
+        hit(foley_b, CLAVES, th, 0.24, (-0.3, 0.0, 0.3)[k_], semis=7 + 2 * k_, dur=0.1, rel=0.04)
+    for key in ("s2", "s3", "s4", "s5", "reneg", "day"):                   # la caméra glisse d'un socle à l'autre
+        foley_b.add(whoosh(0.42, 0.07, True, 500, 6000), T[key] - 0.45, pan=0.2)
+    for tk in CUES["ticks"]:                                                # les cases se cochent
+        hit(foley_b, CLAVES, tk, 0.3, 0.2, semis=7, dur=0.1, rel=0.04)
+    for ts_ in CUES["sinks"]:                                               # les offres passent à travers la grille
+        hit(foley_b, CLACK, ts_ + 0.05, 0.13, rng.uniform(-0.4, 0.4), semis=rng.uniform(-6, -1), dur=0.08, rel=0.03)
+    for k_, m in enumerate([81, 84, 88]):                                   # trois seulement restent
+        pl_b.add(pluck(m, 0.4, 0.8), CUES["chosen"] + k_ * 0.12, pan=(-0.2, 0.0, 0.2)[k_])
+    w0, w1 = CUES["walk"]
+    tt = w0
+    while tt < w1:
+        hit(foley_b, CLACK, tt, 0.09, rng.uniform(-0.15, 0.15), semis=-8, dur=0.06, rel=0.03)
+        tt += 0.25
+    p0, p1 = CUES["sign"]
+    foley_b.add(marker(p1 - p0, 0.06), p0, pan=0.2)                         # la signature
+    hit(foley_b, GUIRO, CUES["door"], 0.14, 0.2, semis=-12, dur=0.5, rel=0.1)
+    hit(foley_b, GUIRO, CUES["renegSpin"], 0.16, -0.1, semis=2, dur=1.0, rel=0.15)
+    pl_b.add(pluck(86, 0.38, 0.8), CUES["dayRing"], pan=0.15)
+elif MAQUETTE:
     d0, d1 = CUES["dashes"]                     # le tracé droit sur le plan (feutre)
     foley_b.add(marker(d1 - d0, 0.05), d0, pan=-0.1)
     pl_b.add(pluck(79, 0.35, 0.7), 1.0, pan=0.25)          # le cercle au pied de la tour
