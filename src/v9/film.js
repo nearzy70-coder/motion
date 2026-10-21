@@ -14,7 +14,7 @@
 //  54,75 – 68    Store menthe « gratuit.* », puis signature sur la nuit.
 import * as THREE from 'three';
 import * as I from './iso.js';
-import { T, L, W, H, C } from './timeline.js';
+import { T, L, W, H, C, DURATION } from './timeline.js';
 import { E, prog, lerp, clamp, rng, bezier } from '../lib/ease.js';
 import { el, show, op, tf } from '../lib/dom.js';
 
@@ -790,6 +790,9 @@ function freeUpdate(t) {
   free.foot.style.color = t < T.end ? 'rgba(17,17,17,0.66)' : 'rgba(255,255,255,0.5)';
   op(free.foot, t < T.end ? prog(t, T.free + 0.9, T.free + 1.3) : 1);
   if (!on) return;
+  // lente avancée : l'image respire jusqu'à la signature
+  free.root.style.transform = `scale(${(1 + 0.04 * E.inOutCubic(prog(t, T.free1, T.end))).toFixed(4)})`;
+  free.root.style.transformOrigin = '0 30%';
   free.lead.ls.forEach((ln, i) => animChars(ln, t, [T.free1, T.free2][i], T.end - 0.1));
   animChars(free.big.ls[0], t, T.free3, T.end - 0.05);
 }
@@ -811,6 +814,9 @@ function endUpdate(t, ctx) {
   const on = t >= T.end;
   show(e.root, on);
   if (!on) return;
+  const zs = 1 + 0.03 * E.inOutCubic(prog(t, T.write, DURATION));
+  e.root.style.transform = `scale(${zs.toFixed(4)})`;
+  e.root.style.transformOrigin = '0 0';
   show(e.vous.root, t < T.write + 0.2);
   e.vous.ls.forEach((ln, i) => animChars(ln, t, [T.vous1, T.vous2][i], T.vousOut));
   show(e.sig.root, t > T.write - 0.1); show(e.rest.root, t > T.line2 - 0.1);
@@ -821,7 +827,8 @@ function endUpdate(t, ctx) {
   const r = ctx.measure(last);
   const [dy, sq] = drop(t, T.dot - 0.3, 260, 0.3);
   show(e.dot, t > T.dot - 0.3);
-  e.dot.style.transform = `translate3d(${(r.x + r.w + 6 - L.mx).toFixed(1)}px,${(r.y + r.h * 0.78 - 22 - dy).toFixed(1)}px,0) scale(${(2 - sq).toFixed(3)},${sq.toFixed(3)})`;
+  // coordonnées locales du bloc (qui avance lentement) : on retire son échelle
+  e.dot.style.transform = `translate3d(${((r.x + r.w - L.mx) / zs + 6).toFixed(1)}px,${(r.y / zs + (r.h / zs) * 0.78 - 22 - dy).toFixed(1)}px,0) scale(${(2 - sq).toFixed(3)},${sq.toFixed(3)})`;
   e.dot.style.transformOrigin = '50% 100%';
   const c = E.enter(prog(t, T.cta, T.cta + 0.6));
   tf(e.cta, 0, (1 - c) * 26, 0.94 + 0.06 * c); op(e.cta, prog(t, T.cta, T.cta + 0.25));

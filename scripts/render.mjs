@@ -94,9 +94,9 @@ const wav = audio ? path.join(ROOT, audio) : path.join(ROOT, 'renders', 'audio',
 const hasAudio = fs.existsSync(wav);
 let afilter = null;
 if (hasAudio) {
-  const pr = spawnSync('ffmpeg', ['-hide_banner', '-nostats', '-i', wav, '-af', 'loudnorm=I=-14:TP=-1.0:LRA=11:print_format=json', '-f', 'null', '-'], { encoding: 'utf8' });
+  const pr = spawnSync('ffmpeg', ['-hide_banner', '-nostats', '-i', wav, '-af', 'loudnorm=I=-14:TP=-1.5:LRA=11:print_format=json', '-f', 'null', '-'], { encoding: 'utf8' });
   const m = JSON.parse(pr.stderr.slice(pr.stderr.lastIndexOf('{')));
-  afilter = `atrim=${FROM}:${TO},asetpts=PTS-STARTPTS,loudnorm=I=-14:TP=-1.0:LRA=11:measured_I=${m.input_i}:measured_TP=${m.input_tp}:measured_LRA=${m.input_lra}:measured_thresh=${m.input_thresh}:offset=${m.target_offset}:linear=true,aresample=48000`;
+  afilter = `atrim=${FROM}:${TO},asetpts=PTS-STARTPTS,loudnorm=I=-14:TP=-1.5:LRA=11:measured_I=${m.input_i}:measured_TP=${m.input_tp}:measured_LRA=${m.input_lra}:measured_thresh=${m.input_thresh}:offset=${m.target_offset}:linear=true,aresample=48000`;
 }
 
 // --- Vidéo : moyenne des sous-images (flou de mouvement) par scripts/blend.py, puis encodage
